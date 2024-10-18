@@ -1,0 +1,29 @@
+type Result = variant { Ok : RentalTransaction; Err : text };
+
+type Customer = record {
+  age : nat8;
+  pan : text;
+  mobile_number : text;
+  name : text;
+  email : text;
+  country_code : text;
+  aadhar : text;
+};
+
+type PaymentStatus = variant { Paid; Unpaid };
+
+type RentalTransaction = record {
+  end_timestamp : nat64;
+  total_amount : float64;
+  customer : opt Customer;
+  start_timestamp : nat64;
+  customer_principal_id : principal;
+  payment_status : PaymentStatus;
+  car_id : nat64;
+  booking_id : nat64;
+};
+
+
+service : () -> {
+  reserve_car : (nat64, nat64, nat64, Customer) -> (Result);
+}

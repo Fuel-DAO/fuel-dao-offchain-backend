@@ -1,0 +1,49 @@
+[package]
+name = "fuel-dao-offchain"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "offchain"
+path = "src/lib/lib.rs"
+
+[[bin]]
+name = "offchain_server"
+path = "src/bin/server/main.rs"
+
+[dependencies]
+anyhow = "1.0.86"
+axum = "0.7.5"
+derive_more = "0.99.17"
+serde = { version = "1", features = ["std", "derive"] }
+thiserror = "1.0.61"
+tokio = { version = "1.38", features = ["full"] }
+tower-http = { version = "0.5.2", features = ["trace"] }
+tower-layer = "0.3.2"
+tracing = "0.1.40"
+tracing-subscriber = "0.3"
+regex = "1.11.0"
+ic-agent = { version = "0.38.2", features = ["wasm-bindgen"]}
+ic-base-types = { git = "https://github.com/dfinity/ic", rev = "tags/release-2024-05-29_23-02-base" }
+candid = "0.10.3"
+serde_bytes = "0.11.14"
+k256 = { version = "0.13.4", default-features = false, features = [
+    "std",
+    "jwk",
+] }
+dotenv_codegen = "0.15.0"
+dotenv = "*"
+reqwest = "0.12.8"
+base64 = "0.22.1"
+time = {version = "0.3.36", features = ["formatting", "parsing"]}
+serde_json = "1.0.128"
+
+
+
+[build-dependencies]
+serde = { version = "1.0", features = ["derive"] }
+candid_parser = "0.1.1"
+serde_json = "1.0.110"
+convert_case = "0.6.0"
+dotenv_codegen = "0.15.0"
+anyhow = "1.0.86"
