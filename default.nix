@@ -1,4 +1,4 @@
-    # Set {}:
+{}:
 let
   # The specific revision of nixpkgs we want to use
   rev = "1c3a28d84f970e7774af04372ade06399add182e";
@@ -58,4 +58,5 @@ dfx-env.overrideAttrs (old: {
       echo "Trunk version: $(trunk -V)"
     '';
 })
+
 
