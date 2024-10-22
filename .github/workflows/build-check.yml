@@ -1,4 +1,4 @@
-name: Canisters Test Suite and Deployment
+name: build-check
 
 on:
   push:
