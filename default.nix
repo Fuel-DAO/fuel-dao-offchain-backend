@@ -44,7 +44,7 @@ dfx-env.overrideAttrs (old: {
   shellHook = ''
       # Add the wasm32 target to Rust
       rustup target add wasm32-unknown-unknown
-
+      rustup target add x86_64-unknown-linux-musl
       # Install candid-extractor (needed for IC projects)
       cargo install --root $out --force candid-extractor
       ln -s $out/bin/candid-extractor $out/bin/candid-extractor

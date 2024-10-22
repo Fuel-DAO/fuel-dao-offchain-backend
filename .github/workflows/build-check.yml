@@ -38,11 +38,11 @@ jobs:
             .dfx/
           key: rust-test-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Install Rust target
-        run: |
-          nix-shell --pure -p rustup --run "
-            rustup target add x86_64-unknown-linux-musl
-          "
+      # - name: Install Rust target
+      #   run: |
+      #     nix-shell --pure -p rustup --run "
+      #       rustup target add x86_64-unknown-linux-musl
+      #     "
 
       # Uncomment and modify as needed for linting
       # - name: Lint check
