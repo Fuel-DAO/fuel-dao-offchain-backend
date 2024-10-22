@@ -13,16 +13,16 @@ pub struct AgentWrapper(Agent);
 
 impl AgentWrapper {
     pub fn build(builder_func: impl FnOnce(AgentBuilder) -> AgentBuilder) -> Self {
-
-        let live = dotenv!("BACKEND") == "LIVE" ;
-
+        // let live = dotenv!("BACKEND") == "LIVE" ;
+        let backend = env::var("BACKEND").unwrap_or_else(|_| "DEV".to_string()); // Default value set to "DEV"
+        let live = backend == "LIVE";
         let url = if live {
             LIVE_AGENT_URL
         } else {
             LOCAL_AGENT_URL
         };
 
-        let mut builder =  Agent::builder().with_url(url);
+        let mut builder = Agent::builder().with_url(url);
         builder = builder_func(builder);
         Self(builder.build().unwrap())
     }
