@@ -53,10 +53,10 @@ jobs:
       #     "
 
       - name: Build
+        env:
+          BACKEND: "LOCAL" # Set a demo value for BACKEND
         run: |
-          nix-shell --run "
-            cargo build --release --target x86_64-unknown-linux-musl
-          "
+          nix-shell --run "cargo build --release --target x86_64-unknown-linux-musl"
 
       - name: Run Canister Test Suite
         env:
