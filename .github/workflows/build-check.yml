@@ -1,49 +1,42 @@
-name: Build and Check Linting with Nix
+name: Canisters Test Suite and Deployment
 
 on:
-  workflow_call:
-    inputs:
-      publish-artifact:
-        default: false
-        required: false
-        type: boolean
-  workflow_dispatch:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
 
-env:
-  CARGO_TERM_COLOR: always
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-    name: build check
-    runs-on: ubuntu-latest
+  test:
+    name: Run Canister Test Suite
+    runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout repository and submodules
+      - name: Checkout Code
         uses: actions/checkout@v3
+
+      - name: Cache install Nix packages
+        uses: rikhuijzer/cache-install@v1.1.4
         with:
-          submodules: recursive
+          key: nix-${{ hashFiles('default.nix') }}
 
-      - name: Install Nix
-        run: |
-          curl -L https://nixos.org/nix/install | sh
-          . $HOME/.nix-profile/etc/profile.d/nix.sh
-          nix-channel --add https://nixos.org/channels/nixpkgs-unstable
-          nix-channel --update
-
-      - name: Set up Nix environment
-        run: |
-          nix-shell --pure -p rustup protobuf_21 muslTools openssl x86_64-linux-musl-gcc --run "rustup install stable && rustup default stable"
-
-      - name: Build setup
-        run: |
-          nix-shell --pure -p rustup muslTools --run "
-            rustup target add x86_64-unknown-linux-musl
-            rustup component add rustfmt
-            rustup component add clippy
-          "
+      - name: Cache rust dependencies, build output, and DFX build cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+            .dfx/
+          key: rust-test-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Lint check
         run: |
@@ -55,14 +48,12 @@ jobs:
       - name: Build
         run: |
           nix-shell --pure -p rustup muslTools --run "
-            TARGET_CC=x86_64-linux-musl-gcc cargo build --release --target x86_64-unknown-linux-musl
+            cargo build --release --target x86_64-unknown-linux-musl
           "
-        env:
-          TARGET_CC: x86_64-linux-musl-gcc
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
-        if: ${{ inputs.publish-artifact }}
+        if: always()
         with:
           name: build-musl
           path: |
