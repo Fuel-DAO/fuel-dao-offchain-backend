@@ -34,6 +34,10 @@ dfx-env.overrideAttrs (old: {
 
   # Shell hooks (executed when the shell starts)
   shellHook = ''
+      # Set environment variables for OpenSSL
+      export OPENSSL_DIR="${pkgs.openssl}/lib"
+      export PKG_CONFIG_PATH="${pkgs.pkg-config}/lib/pkgconfig"
+
       # Add the wasm32 target to Rust
       rustup target add wasm32-unknown-unknown
 
