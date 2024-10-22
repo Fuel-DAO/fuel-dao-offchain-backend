@@ -1,6 +1,5 @@
 use std::time::{self, Duration, SystemTime};
 
-use candid::Principal;
 use ic_agent::{identity::{DelegatedIdentity, Delegation, Secp256k1Identity, SignedDelegation}, Identity};
 use k256::elliptic_curve::{rand_core::OsRng, JwkEcKey};
 use serde::{Deserialize, Serialize};

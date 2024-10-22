@@ -1,5 +1,4 @@
 use std::fmt::{Display, Formatter};
-use candid::Principal;
 use derive_more::From;
 use regex::Regex;
 use thiserror::Error;

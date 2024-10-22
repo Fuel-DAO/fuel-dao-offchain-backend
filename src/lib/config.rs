@@ -1,8 +1,8 @@
-use std::env;
+use std::{env, time::{SystemTime, UNIX_EPOCH}};
 
 use anyhow::Context;
 
-use crate::outbound::email_client::{self, EmailConfig};
+use crate::outbound::email_client::EmailConfig;
 
 const SERVER_PORT_KEY: &str = "SERVER_PORT";
 
@@ -38,6 +38,7 @@ impl Config {
                 client_secret: load_env(EMAIL_CLIENT_SECRET)?,
                 refresh_token: load_env(EMAIL_REFRESH_TOKEN)?,
                 access_token: load_env(EMAIL_ACCESS_TOKEN)?,
+                token_expiry:  SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs(),
         }  ;
 
         Ok(Config {
