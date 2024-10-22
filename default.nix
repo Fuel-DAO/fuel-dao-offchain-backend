@@ -21,10 +21,13 @@ dfx-env.overrideAttrs (old: {
   nativeBuildInputs = with pkgs; old.nativeBuildInputs ++
     [
       binaryen           # WebAssembly tools
-        flyctl             # Fly.io CLI tool
-        rustup             # For managing Rust toolchains
-        openssl            # Secure network connections
-        protobuf_21     ] ++ (if pkgs.stdenv.isDarwin then [
+      flyctl             # Fly.io CLI tool
+      rustup             # For managing Rust toolchains
+      openssl            # Secure network connections
+      openssl.dev        # Development package for OpenSSL
+      pkg-config         # Package configuration tool
+      protobuf_21        # Protobuf library
+    ] ++ (if pkgs.stdenv.isDarwin then [
       darwin.apple_sdk.frameworks.Foundation
       pkgs.darwin.libiconv
     ] else []);
@@ -42,12 +45,11 @@ dfx-env.overrideAttrs (old: {
       export PATH="$out/bin:$PATH"
 
       # Print installed versions of node, npm, and trunk to verify installation
-        echo "Binaryen version: $(binaryen --version)"
+      echo "Binaryen version: $(binaryen --version)"
       echo "Flyctl version: $(flyctl --version)"
       echo "Rustup version: $(rustup --version)"
       echo "OpenSSL version: $(openssl version)"
       echo "Protobuf version: $(protoc --version)"
-    '';
+  '';
 })
-
 
