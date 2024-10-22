@@ -20,13 +20,21 @@ dfx-env.overrideAttrs (old: {
   # Adding native build inputs (tools and libraries we want available)
   nativeBuildInputs = with pkgs; old.nativeBuildInputs ++
     [
-      binaryen           # WebAssembly tools
-      flyctl             # Fly.io CLI tool
-      rustup             # For managing Rust toolchains
-      openssl            # Secure network connections
-      openssl.dev        # Development package for OpenSSL
-      pkg-config         # Package configuration tool
-      protobuf_21        # Protobuf library
+      rustup              # For managing Rust toolchains
+      pkg-config          # For managing build configurations
+      openssl             # Secure network connections
+      protobuf            # For working with Protocol Buffers
+      cmake               # Build system
+      cachix              # Caching for build artifacts
+      killall             # Unix utility for killing processes
+      jq                  # Command-line JSON processor
+      coreutils           # Basic GNU utilities (ls, cat, etc.)
+      bc                  # Command-line calculator
+      python3Full         # Full Python 3 environment
+      libiconv            # Text conversion library
+      wget                # Tool to download files from the web
+      nodejs              # Node.js runtime (includes npm)
+      trunk               # Trunk for managing front-end assets
     ] ++ (if pkgs.stdenv.isDarwin then [
       darwin.apple_sdk.frameworks.Foundation
       pkgs.darwin.libiconv
@@ -34,10 +42,6 @@ dfx-env.overrideAttrs (old: {
 
   # Shell hooks (executed when the shell starts)
   shellHook = ''
-      # Set environment variables for OpenSSL
-      export OPENSSL_DIR="${pkgs.openssl}/lib"
-      export PKG_CONFIG_PATH="${pkgs.pkg-config}/lib/pkgconfig"
-
       # Add the wasm32 target to Rust
       rustup target add wasm32-unknown-unknown
 
@@ -49,11 +53,10 @@ dfx-env.overrideAttrs (old: {
       export PATH="$out/bin:$PATH"
 
       # Print installed versions of node, npm, and trunk to verify installation
-      echo "Binaryen version: $(binaryen --version)"
-      echo "Flyctl version: $(flyctl --version)"
-      echo "Rustup version: $(rustup --version)"
-      echo "OpenSSL version: $(openssl version)"
-      echo "Protobuf version: $(protoc --version)"
-  '';
+      echo "Node.js version: $(node -v)"
+      echo "npm version: $(npm -v)"
+      echo "Trunk version: $(trunk -V)"
+    '';
 })
+
 
