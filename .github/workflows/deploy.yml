@@ -10,13 +10,25 @@ on:
       - main
 
 jobs:
+  build_check:
+    name: Build and Check
+    uses: ./.github/workflows/build-check.yml
+    with:
+      publish-artifact: true
+
   deploy:
     name: Deploy
+    needs: build_check
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-musl
 
       - name: Setup Flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
