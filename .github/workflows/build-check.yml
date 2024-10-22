@@ -21,6 +21,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Install pkg-config and OpenSSL development libraries using Nix
+        run: nix-shell --pure -p pkg-config openssl
+
       - name: Cache install Nix packages
         uses: rikhuijzer/cache-install@v1.1.4
         with:
