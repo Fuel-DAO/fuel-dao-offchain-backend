@@ -53,12 +53,13 @@ mod build_common {
             {local_canister_id_mod}
         }}
 
-        
+
         mod ic {{
             {ic_canister_id_mod}
         }}
         pub use {}::*;
-"#, if is_dev {"local"} else {"ic"}
+"#,
+            if is_dev { "local" } else { "ic" }
         );
         let canister_id_mod_path = PathBuf::from(out_dir).join("canister_ids.rs");
         fs::write(canister_id_mod_path, canister_id_mod_contents)?;
@@ -69,9 +70,11 @@ mod build_common {
     fn build_did_intf() -> Result<()> {
         println!("cargo:rerun-if-changed=./did/*");
 
-        let is_dev = dotenv!("BACKEND") == "LOCAL";
-
-        let mut candid_config: candid_parser::bindings::rust::Config = candid_parser::bindings::rust::Config::new();
+        // let is_dev = dotenv!("BACKEND") == "LOCAL";
+        let backend = env::var("BACKEND").unwrap_or_else(|_| "LOCAL".to_string());
+        let is_dev = backend == "LOCAL";
+        let mut candid_config: candid_parser::bindings::rust::Config =
+            candid_parser::bindings::rust::Config::new();
         candid_config.set_target(candid_parser::bindings::rust::Target::Agent);
         candid_config.set_type_attributes(
             "#[derive(CandidType, Deserialize, serde::Serialize, Debug, Clone)]".into(),
