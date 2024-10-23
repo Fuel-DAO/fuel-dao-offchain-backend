@@ -50,6 +50,9 @@ jobs:
             .dfx/
           key: rust-test-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: clean
+        run: nix-shell --run 'cargo clean'
+
       - name: Build
         run: nix-shell --run 'cargo build --release --target x86_64-unknown-linux-musl '
         env:
