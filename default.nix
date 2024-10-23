@@ -22,7 +22,7 @@ dfx-env.overrideAttrs (old: {
     [
       rustup              # For managing Rust toolchains
       pkg-config          # For managing build configurations
-      openssl             # Secure network connections
+      openssl.dev         # OpenSSL development libraries
       protobuf            # For working with Protocol Buffers
       cmake               # Build system
       cachix              # Caching for build artifacts
@@ -35,8 +35,7 @@ dfx-env.overrideAttrs (old: {
       wget                # Tool to download files from the web
       nodejs              # Node.js runtime (includes npm)
       trunk               # Trunk for managing front-end assets
-      musl-tools          # musl-gcc for cross-compiling
-      libssl-dev          # OpenSSL development libraries
+      musl                # musl for cross-compiling
     ] ++ (if pkgs.stdenv.isDarwin then [
       darwin.apple_sdk.frameworks.Foundation
       pkgs.darwin.libiconv
