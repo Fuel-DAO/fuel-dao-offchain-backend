@@ -17,7 +17,7 @@ env:
 
 jobs:
   build:
-    name: build check
+    name: Build Check
     runs-on: ubuntu-latest
 
     env:
@@ -32,18 +32,13 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+
       - name: Cache install Nix packages
         uses: rikhuijzer/cache-install@v1.1.4
         with:
           key: nix-${{ hashFiles('default.nix') }}
-      # - name: Install Rust
-      #   run: |
-      #     sudo apt update
-      #     curl https://sh.rustup.rs -sSf | sh -s -- -y
-      #     source $HOME/.cargo/env
-      #     cargo install ic-cdk-optimizer
 
-      - name: Cache rust dependencies, build output and DFX build cache
+      - name: Cache Rust dependencies, build output, and DFX build cache
         uses: actions/cache@v3
         with:
           path: |
@@ -54,13 +49,10 @@ jobs:
             target/
             .dfx/
           key: rust-test-${{ hashFiles('**/Cargo.lock') }}
-      # - name: lint check
-      #   run: |
-      #     cargo fmt --check
-      #     cargo clippy --no-deps --all-features --release -- -Dwarnings
 
       - name: Install prerequisites
         run: |
+          sudo apt-get update
           sudo apt-get install -y protobuf-compiler musl-tools libssl-dev
 
       - name: Rust Setup
@@ -78,15 +70,16 @@ jobs:
       - name: Set up pkg-config for cross-compilation
         run: |
           echo 'export PKG_CONFIG="/usr/bin/x86_64-linux-musl-gcc -pkg-config"' >> $GITHUB_ENV
+          echo 'export PKG_CONFIG_PATH="/usr/lib/x86_64-linux-musl/pkgconfig"' >> $GITHUB_ENV
 
       - name: Build
-        run: cargo build --release --target x86_64-unknown-linux-musl
+        run: cargo build --release --target x86_64-unknown-linux-musl --verbose
         env:
           TARGET_CC: x86_64-linux-musl-gcc
-          OPENSSL_DIR: /usr/include/openssl
-      # - name: Run tests
-      #   run: cargo test --verbose
+          OPENSSL_DIR: /usr/include # Adjust if necessary
+
       - run: touch .empty
+
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         if: ${{ inputs.publish-artifact }}
