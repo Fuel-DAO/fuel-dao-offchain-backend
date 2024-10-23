@@ -38,7 +38,6 @@ dfx-env.overrideAttrs (old: {
       nodejs              # Node.js runtime (includes npm)
       trunk               # Trunk for managing front-end assets
       musl                # musl for cross-compiling
-      musl-tools
       gcc                 # C Compiler
     ] ++ (if pkgs.stdenv.isDarwin then [
       darwin.apple_sdk.frameworks.Foundation
