@@ -29,15 +29,14 @@ jobs:
 
       - name: Setup Flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: chmod +x target/x86_64-unknown-linux-musl/release/fuel-dao-offchain
+      - run: chmod +x target/x86_64-unknown-linux-musl/release/fuel-dao-offchain-backend
 
-      - name: Create Fly.io App
-        run: |
-          flyctl apps create fuel-dao-offchain || echo "App already exists"
+
 
       - name: Verify App Existence
         run: flyctl apps list
 
       - name: Deploy to Fly.io
-        run: flyctl deploy -a fuel-dao-offchain # Specify the app name here
+        run: flyctl deploy -a fuel-dao-offchain-backend
+ # Specify the app name here
 
