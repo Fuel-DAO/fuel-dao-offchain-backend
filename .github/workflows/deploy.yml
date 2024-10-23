@@ -21,6 +21,13 @@ jobs:
       - name: Setup Flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
 
+      - name: Login to Fly.io
+        run: flyctl auth token ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
+
+      - name: Create Fly.io App
+        run: |
+          flyctl apps create fuel-dao-offchain || echo "App already exists"
+
       - name: Set environment secrets
         run: |
           flyctl secrets set BACKEND="${{ secrets.BACKEND }}" --app "fuel-dao-offchain"
