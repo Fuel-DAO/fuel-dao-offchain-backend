@@ -22,7 +22,7 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
 
       - name: Login to Fly.io
-        run: flyctl auth token ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
+        run: flyctl auth login --access-token ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
 
       - name: Create Fly.io App
         run: |
