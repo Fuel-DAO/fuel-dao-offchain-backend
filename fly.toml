@@ -10,6 +10,7 @@ kill_timeout = "5s"
 
 [env]
 PORT = "8080"
+RUST_LOG = "info"  # Combine your environment variables here
 
 [processes]
 # The command below will launch the server; adjust if needed.
@@ -39,9 +40,6 @@ auto_rollback = true
 # VM resources configuration.
 [deploy]
 strategy = "rolling"
-
-[env]
-RUST_LOG = "info"
 
 [[vm]]
 memory = "8gb"
