@@ -1,7 +1,11 @@
-name: Fly Deploy
+name: Deploy to Fly.io on Push or PR to Main
 
 on:
+  workflow_dispatch:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
 
@@ -17,4 +21,4 @@ jobs:
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - run: flyctl deploy --remote-only
+      - run: flyctl deploy --remote-onlyFLY_IO_DEPLOY_TOKEN }}
