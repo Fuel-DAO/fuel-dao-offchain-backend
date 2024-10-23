@@ -51,8 +51,6 @@ dfx-env.overrideAttrs (old: {
 
       # Add Node.js and npm binaries to PATH (ensuring they are available globally)
       export PATH="$out/bin:$PATH"
-      # Add OpenSSL and pkg-config paths dynamically
-      export OPENSSL_DIR="${OPENSSL_DIR:-/usr/lib/x86_64-linux-gnu}"
 
       # Print installed versions of node, npm, and trunk to verify installation
       echo "Node.js version: $(node -v)"
