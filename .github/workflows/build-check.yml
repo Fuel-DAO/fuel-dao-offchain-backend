@@ -50,13 +50,13 @@ jobs:
             .dfx/
           key: rust-test-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: List Nix Store Contents
-        run: |
-          if [ -d /nix/store/vch2iblvryxwsgh4zz5k341c10cja06i-nix-shell ]; then
-            ls -l /nix/store/vch2iblvryxwsgh4zz5k341c10cja06i-nix-shell/
-          else
-            echo "/nix/store/vch2iblvryxwsgh4zz5k341c10cja06i-nix-shell is not a directory"
-          fi
+      # - name: List Nix Store Contents
+      #   run: |
+      #     if [ -d /nix/store/vch2iblvryxwsgh4zz5k341c10cja06i-nix-shell ]; then
+      #       ls -l /nix/store/vch2iblvryxwsgh4zz5k341c10cja06i-nix-shell/
+      #     else
+      #       echo "/nix/store/vch2iblvryxwsgh4zz5k341c10cja06i-nix-shell is not a directory"
+      #     fi
 
       - name: Build
         run: nix-shell --run 'cargo build --release --target x86_64-unknown-linux-musl --verbose'
