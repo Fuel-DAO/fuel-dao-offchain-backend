@@ -17,6 +17,15 @@ jobs:
     name: Run Canister Test Suite
     runs-on: ubuntu-22.04
 
+    env:
+      BACKEND: ${{ secrets.BACKEND }}
+      RUST_LOG: ${{ secrets.RUST_LOG }}
+      SERVER_PORT: ${{ secrets.SERVER_PORT }}
+      EMAIL_CLIENT_ID: ${{ secrets.EMAIL_CLIENT_ID }}
+      EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
+      EMAIL_ACCESS_TOKEN: ${{ secrets.EMAIL_ACCESS_TOKEN }}
+      EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -38,29 +47,13 @@ jobs:
             .dfx/
           key: rust-test-${{ hashFiles('**/Cargo.lock') }}
 
-      # - name: Install Rust target
-      #   run: |
-      #     nix-shell --pure -p rustup --run "
-      #       rustup target add x86_64-unknown-linux-musl
-      #     "
-
-      # Uncomment and modify as needed for linting
-      # - name: Lint check
-      #   run: |
-      #     nix-shell --pure -p rustup --run "
-      #       cargo fmt --check
-      #       cargo clippy --no-deps --all-features --release -- -D warnings
-      #     "
-
       - name: Build
-        env:
-          BACKEND: "LOCAL" # Set a demo value for BACKEND
         run: |
-          nix-shell --run "cargo build --release --target x86_64-unknown-linux-musl"
+          nix-shell --run "
+            cargo build --release --target x86_64-unknown-linux-musl
+          "
 
       - name: Run Canister Test Suite
-        env:
-          POCKET_IC_BIN: ${{ github.workspace }}/pocket-ic
         run: |
           nix-shell --run "cargo test"
 
