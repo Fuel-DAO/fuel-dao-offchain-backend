@@ -61,10 +61,7 @@ dfx-env.overrideAttrs (old: {
       cargo install --root $out --force candid-extractor
       ln -s $out/bin/candid-extractor $out/bin/candid-extractor
 
-      # Create a symbolic link for candid-extractor if it doesn't already exist
-      if [ ! -e "$out/bin/candid-extractor" ]; then
-          ln -s "$out/bin/candid-extractor" "$out/bin/candid-extractor"
-      fi
+
       # Add Node.js and npm binaries to PATH
       export PATH="$out/bin:$PATH"
 
