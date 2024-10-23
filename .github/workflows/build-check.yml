@@ -59,9 +59,9 @@ jobs:
       #     cargo fmt --check
       #     cargo clippy --no-deps --all-features --release -- -Dwarnings
 
-      - name: Install prereqs
+      - name: Install prerequisites
         run: |
-          sudo apt-get install protobuf-compiler musl-tools
+          sudo apt-get install -y protobuf-compiler musl-tools libssl-dev
 
       - name: Rust Setup
         uses: dtolnay/rust-toolchain@master
@@ -75,11 +75,15 @@ jobs:
           rustup component add rustfmt
           rustup component add clippy
 
+      - name: Set up pkg-config for cross-compilation
+        run: |
+          echo 'export PKG_CONFIG="/usr/bin/x86_64-linux-musl-gcc -pkg-config"' >> $GITHUB_ENV
+
       - name: Build
         run: cargo build --release --target x86_64-unknown-linux-musl
-
         env:
           TARGET_CC: x86_64-linux-musl-gcc
+          OPENSSL_DIR: /usr/include/openssl
       # - name: Run tests
       #   run: cargo test --verbose
       - run: touch .empty
