@@ -25,17 +25,17 @@ jobs:
         run: |
           flyctl apps create fuel-dao-offchain || echo "App already exists"
 
-      - name: Set environment secrets
-        run: |
-          flyctl secrets set BACKEND="${{ secrets.BACKEND }}" --app "fuel-dao-offchain"
-          flyctl secrets set RUST_LOG="${{ secrets.RUST_LOG }}" --app "fuel-dao-offchain"
-          flyctl secrets set SERVER_PORT="${{ secrets.SERVER_PORT }}" --app "fuel-dao-offchain"
-          flyctl secrets set EMAIL_CLIENT_ID="${{ secrets.EMAIL_CLIENT_ID }}" --app "fuel-dao-offchain"
-          flyctl secrets set EMAIL_CLIENT_SECRET="${{ secrets.EMAIL_CLIENT_SECRET }}" --app "fuel-dao-offchain"
-          flyctl secrets set EMAIL_ACCESS_TOKEN="${{ secrets.EMAIL_ACCESS_TOKEN }}" --app "fuel-dao-offchain"
-          flyctl secrets set EMAIL_REFRESH_TOKEN="${{ secrets.EMAIL_REFRESH_TOKEN }}" --app "fuel-dao-offchain"
-        env:
-          FLY_IO_DEPLOY_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
+      # - name: Set environment secrets
+      #   run: |
+      #     flyctl secrets set BACKEND="${{ secrets.BACKEND }}" --app "fuel-dao-offchain"
+      #     flyctl secrets set RUST_LOG="${{ secrets.RUST_LOG }}" --app "fuel-dao-offchain"
+      #     flyctl secrets set SERVER_PORT="${{ secrets.SERVER_PORT }}" --app "fuel-dao-offchain"
+      #     flyctl secrets set EMAIL_CLIENT_ID="${{ secrets.EMAIL_CLIENT_ID }}" --app "fuel-dao-offchain"
+      #     flyctl secrets set EMAIL_CLIENT_SECRET="${{ secrets.EMAIL_CLIENT_SECRET }}" --app "fuel-dao-offchain"
+      #     flyctl secrets set EMAIL_ACCESS_TOKEN="${{ secrets.EMAIL_ACCESS_TOKEN }}" --app "fuel-dao-offchain"
+      #     flyctl secrets set EMAIL_REFRESH_TOKEN="${{ secrets.EMAIL_REFRESH_TOKEN }}" --app "fuel-dao-offchain"
+      #   env:
+      #     FLY_IO_DEPLOY_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
 
       - name: Deploy to Fly.io
         run: |
