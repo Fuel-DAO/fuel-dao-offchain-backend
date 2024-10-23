@@ -31,4 +31,4 @@ jobs:
         run: flyctl apps list
 
       - name: Deploy to Fly.io
-        run: flyctl deploy --remote-only
+        run: flyctl deploy
