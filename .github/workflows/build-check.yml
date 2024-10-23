@@ -1,72 +1,3 @@
-name: build-check
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-jobs:
-  test:
-    name: Run Canister Test Suite
-    runs-on: ubuntu-22.04
-
-    env:
-      BACKEND: ${{ secrets.BACKEND }}
-      RUST_LOG: ${{ secrets.RUST_LOG }}
-      SERVER_PORT: ${{ secrets.SERVER_PORT }}
-      EMAIL_CLIENT_ID: ${{ secrets.EMAIL_CLIENT_ID }}
-      EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
-      EMAIL_ACCESS_TOKEN: ${{ secrets.EMAIL_ACCESS_TOKEN }}
-      EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Cache install Nix packages
-        uses: rikhuijzer/cache-install@v1.1.4
-        with:
-          key: nix-${{ hashFiles('default.nix') }}
-
-      - name: Cache rust dependencies, build output, and DFX build cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-            .dfx/
-          key: rust-test-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Build
-        run: |
-          nix-shell --run "
-            cargo build --release --target x86_64-unknown-linux-musl
-          "
-
-      - name: Run Canister Test Suite
-        run: |
-          nix-shell --run "cargo test"
-
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: build-musl
-          path: |
-            $(find target/x86_64-unknown-linux-musl/release -type f -name '*')
-
-
-
 name: Build and Check linting
 
 on:
@@ -97,7 +28,6 @@ jobs:
       EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
       EMAIL_ACCESS_TOKEN: ${{ secrets.EMAIL_ACCESS_TOKEN }}
       EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
-
 
     steps:
       - name: Checkout repository and submodules
