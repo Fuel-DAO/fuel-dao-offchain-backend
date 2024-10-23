@@ -35,6 +35,8 @@ dfx-env.overrideAttrs (old: {
       wget                # Tool to download files from the web
       nodejs              # Node.js runtime (includes npm)
       trunk               # Trunk for managing front-end assets
+      musl-tools          # musl-gcc for cross-compiling
+      libssl-dev          # OpenSSL development libraries
     ] ++ (if pkgs.stdenv.isDarwin then [
       darwin.apple_sdk.frameworks.Foundation
       pkgs.darwin.libiconv
@@ -58,5 +60,4 @@ dfx-env.overrideAttrs (old: {
       echo "Trunk version: $(trunk -V)"
     '';
 })
-
 
