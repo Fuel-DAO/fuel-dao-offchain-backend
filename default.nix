@@ -1,6 +1,6 @@
-{}:
+{ }:
 let
-  # The specific revision of nixpkgs we want to use
+  # Specific revision of nixpkgs
   rev = "1c3a28d84f970e7774af04372ade06399add182e";
 
   # Fetch the Nixpkgs repository
@@ -38,24 +38,34 @@ dfx-env.overrideAttrs (old: {
       nodejs              # Node.js runtime (includes npm)
       trunk               # Trunk for managing front-end assets
       musl                # musl for cross-compiling
+      musl-tools
+      gcc                 # C Compiler
     ] ++ (if pkgs.stdenv.isDarwin then [
       darwin.apple_sdk.frameworks.Foundation
       pkgs.darwin.libiconv
     ] else []);
 
+  # Build dependencies for cross-compilation
+  buildInputs = with pkgs; old.buildInputs ++ [
+    openssl.dev  # OpenSSL for cross-compilation
+  ];
+
   # Shell hooks (executed when the shell starts)
   shellHook = ''
-      # Add the wasm32 target to Rust
+      # Add the musl target for Rust
       rustup target add wasm32-unknown-unknown
       rustup target add x86_64-unknown-linux-musl
-      # Install candid-extractor (needed for IC projects)
+      rustup component add rustfmt
+      rustup component add clippy
+
+      # Install candid-extractor
       cargo install --root $out --force candid-extractor
       ln -s $out/bin/candid-extractor $out/bin/candid-extractor
 
-      # Add Node.js and npm binaries to PATH (ensuring they are available globally)
+      # Add Node.js and npm binaries to PATH
       export PATH="$out/bin:$PATH"
 
-      # Print installed versions of node, npm, and trunk to verify installation
+      # Print versions
       echo "Node.js version: $(node -v)"
       echo "npm version: $(npm -v)"
       echo "Trunk version: $(trunk -V)"
