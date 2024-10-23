@@ -21,4 +21,4 @@ jobs:
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - run: flyctl deploy --remote-onlyFLY_IO_DEPLOY_TOKEN }}
+      - run: flyctl deploy --remote-only }}
