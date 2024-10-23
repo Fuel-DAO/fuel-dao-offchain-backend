@@ -30,26 +30,30 @@ jobs:
       EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
 
     steps:
-      - name: Checkout repository and submodules
+      - name: Checkout Code
         uses: actions/checkout@v3
+      - name: Cache install Nix packages
+        uses: rikhuijzer/cache-install@v1.1.4
         with:
-          submodules: recursive
+          key: nix-${{ hashFiles('default.nix') }}
+      # - name: Install Rust
+      #   run: |
+      #     sudo apt update
+      #     curl https://sh.rustup.rs -sSf | sh -s -- -y
+      #     source $HOME/.cargo/env
+      #     cargo install ic-cdk-optimizer
 
-      - name: Install prereqs
-        run: |
-          sudo apt-get install protobuf-compiler musl-tools
-
-      - name: Rust Setup
-        uses: dtolnay/rust-toolchain@master
+      - name: Cache rust dependencies, build output and DFX build cache
+        uses: actions/cache@v3
         with:
-          toolchain: "stable"
-          targets: "x86_64-unknown-linux-musl"
-
-      - name: Build setup
-        run: |
-          rustup target add x86_64-unknown-linux-musl
-          rustup component add rustfmt
-          rustup component add clippy
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+            .dfx/
+          key: rust-test-${{ hashFiles('**/Cargo.lock') }}
       # - name: lint check
       #   run: |
       #     cargo fmt --check
