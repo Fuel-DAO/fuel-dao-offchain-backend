@@ -23,6 +23,7 @@ dfx-env.overrideAttrs (old: {
       rustup              # For managing Rust toolchains
       binaryen
       pkg-config          # For managing build configurations
+      openssl
       openssl.dev         # OpenSSL development libraries
       protobuf            # For working with Protocol Buffers
       protobuf_21
