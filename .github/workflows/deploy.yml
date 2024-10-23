@@ -26,7 +26,7 @@ jobs:
 
       - name: Create Fly.io App
         run: |
-          flyctl apps create fuel-dao-offchain || echo "App already exists"
+          flyctl apps create fuel-dao-offchain || echo "App  exists"
 
       - name: Set environment secrets
         run: |
