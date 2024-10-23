@@ -23,9 +23,7 @@ dfx-env.overrideAttrs (old: {
       rustup              # For managing Rust toolchains
       pkg-config          # For managing build configurations
       openssl             # Secure network connections
-      openssl.dev         # Development files for OpenSSL
       protobuf            # For working with Protocol Buffers
-      muslTools           # Provides musl tools
       cmake               # Build system
       cachix              # Caching for build artifacts
       killall             # Unix utility for killing processes
@@ -47,10 +45,6 @@ dfx-env.overrideAttrs (old: {
       # Add the wasm32 target to Rust
       rustup target add wasm32-unknown-unknown
       rustup target add x86_64-unknown-linux-musl
-
-      # Set the OpenSSL directory for the build process
-      export OPENSSL_DIR="${openssl}/lib"
-
       # Install candid-extractor (needed for IC projects)
       cargo install --root $out --force candid-extractor
       ln -s $out/bin/candid-extractor $out/bin/candid-extractor
@@ -64,4 +58,5 @@ dfx-env.overrideAttrs (old: {
       echo "Trunk version: $(trunk -V)"
     '';
 })
+
 
