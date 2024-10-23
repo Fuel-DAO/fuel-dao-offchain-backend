@@ -46,3 +46,6 @@ memory = "8gb"
 cpu_kind = "shared"
 cpus = 8
 
+[target.x86_64-unknown-linux-musl]
+linker = "musl-gcc"
+
