@@ -39,7 +39,6 @@ dfx-env.overrideAttrs (old: {
       trunk               # Trunk for managing front-end assets
       musl                # musl for cross-compiling
       gcc                 # C Compiler
-      make                # GNU make for building C/C++ projects
     ] ++ (if pkgs.stdenv.isDarwin then [
       darwin.apple_sdk.frameworks.Foundation
       pkgs.darwin.libiconv
