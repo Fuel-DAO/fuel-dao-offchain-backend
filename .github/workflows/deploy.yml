@@ -11,6 +11,7 @@ on:
 
 env:
   FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
+  FLY_ORG: "fuel" # Add your organization slug here
 
 jobs:
   deploy:
@@ -25,10 +26,11 @@ jobs:
 
       - name: Create Fly.io App
         run: |
-          flyctl apps create fuel-dao-offchain || echo "App already exists"
+          flyctl apps create fuel-dao-offchain -o $FLY_ORG || echo "App already exists"
 
       - name: Verify App Existence
         run: flyctl apps list
 
       - name: Deploy to Fly.io
-        run: flyctl deploy
+        run: flyctl deploy -a fuel-dao-offchain -o $FLY_ORG # Specify the app name and organization slug here
+
