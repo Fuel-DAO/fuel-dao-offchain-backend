@@ -1,4 +1,4 @@
-name: Deploy to Fly.io on Push or PR to Main
+name: Deploy to Fly.io
 
 on:
   workflow_dispatch:
@@ -17,8 +17,18 @@ jobs:
     name: Deploy app
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Setup Flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - run: flyctl deploy --remote-only
+      - name: Create Fly.io App
+        run: |
+          flyctl apps create fuel-dao-offchain || echo "App already exists"
+
+      - name: Verify App Existence
+        run: flyctl apps list
+
+      - name: Deploy to Fly.io
+        run: flyctl deploy --remote-only
