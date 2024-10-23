@@ -1,48 +1,48 @@
 # fly.toml app configuration file for fuel-dao-offchain
 
-app = "fuel-dao-offchain-backend"
+app = "fuel-dao-offchain"
 primary_region = "sin"
 kill_signal = "SIGINT"
 kill_timeout = "5s"
 
-# [build]
-# # No specific build configuration needed, defaults will be used.
-#
-# [env]
-# PORT = "8080"
-# RUST_LOG = "info"  # Combine your environment variables here
-#
-# [processes]
-# # The command below will launch the server; adjust if needed.
-# web = "./target/x86_64-unknown-linux-musl/release/offchain_server"
-#
-# [[services]]
-# internal_port = 8080
-# protocol = "tcp"
-# processes = ["web"]
-#
-# [[services.ports]]
-# handlers = ["tls"]
-# tls_options = { "alpn" = ["h2"], "versions" = ["TLSv1.2", "TLSv1.3"] }
-# port = 443
-#
-# [[services.ports]]
-# handlers = ["http"]
-# port = 80
-#
-# [services.concurrency]
-# hard_limit = 1000
-# soft_limit = 500
-#
-# [experimental]
-# auto_rollback = true
-#
-# # VM resources configuration.
-# [deploy]
-# strategy = "rolling"
-#
-# [[vm]]
-# memory = "8gb"
-# cpu_kind = "shared"
-# cpus = 8
-#
+[build]
+# No specific build configuration needed, defaults will be used.
+
+[env]
+PORT = "8080"
+RUST_LOG = "info"  # Combine your environment variables here
+
+[processes]
+# The command below will launch the server; adjust if needed.
+web = "./target/x86_64-unknown-linux-musl/release/offchain_server"
+
+[[services]]
+internal_port = 8080
+protocol = "tcp"
+processes = ["web"]
+
+[[services.ports]]
+handlers = ["tls"]
+tls_options = { "alpn" = ["h2"], "versions" = ["TLSv1.2", "TLSv1.3"] }
+port = 443
+
+[[services.ports]]
+handlers = ["http"]
+port = 80
+
+[services.concurrency]
+hard_limit = 1000
+soft_limit = 500
+
+[experimental]
+auto_rollback = true
+
+# VM resources configuration.
+[deploy]
+strategy = "rolling"
+
+[[vm]]
+memory = "8gb"
+cpu_kind = "shared"
+cpus = 8
+
