@@ -30,7 +30,7 @@ FROM scratch
 COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/offchain_server /
 
 # Ensure the templates directory exists in the correct location
-# COPY --from=builder /app/templates /templates
+COPY --from=builder /app/templates /templates
 
 # Copy necessary certificates (optional, depends on your app's requirements)
 # COPY --from=builder /etc/ssl/certs /etc/ssl/certs
