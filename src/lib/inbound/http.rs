@@ -62,7 +62,7 @@ impl HttpServer {
 
         let listener = net::TcpListener::bind(&addr)
             .await
-            .with_context(|| format!("failed to listen on {}", config.port))?;
+            .with_context(|| format!("failed to listen on port {}", config.port))?;
 
         Ok(Self { router, listener })
     }
