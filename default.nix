@@ -121,8 +121,7 @@ dfx-env.overrideAttrs (old: {
     rustup component add clippy
 
       # Fix the cargo config creation
-     mkdir -p ~/.cargo
-    cat > ~/.cargo/config.toml << 'EOF'
+     cat > ~/.cargo/config.toml << EOF
 
 
 
