@@ -2,7 +2,7 @@ FROM debian:bookworm-20240211
 
 WORKDIR /app
 
-COPY ./target/x86_64-unknown-linux-musl/release/offchain-server .
+COPY ./target/x86_64-unknown-linux-musl/release/fueldao-offchain-server .
 
 RUN apt-get update \
     && apt-get install -y ca-certificates \

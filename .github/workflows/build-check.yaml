@@ -85,5 +85,5 @@ jobs:
         with:
           name: build-musl
           path: |
-            target/x86_64-unknown-linux-musl/release/offchain-server
+            target/x86_64-unknown-linux-musl/release/fueldao-offchain-server
             .empty

@@ -39,12 +39,12 @@ jobs:
       - name: Setup dfx
         uses: dfinity/setup-dfx@main
 
-      - run: chmod +x target/x86_64-unknown-linux-musl/release/offchain-server
+      - run: chmod +x target/x86_64-unknown-linux-musl/release/fueldao-offchain-server
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Create Fly.io App (if not exists)
         run: |
-          flyctl apps create offchain-server --org fuel-dao || echo "App already exists, skipping creation"
+          flyctl apps create fueldao-offchain-server --org fuel-dao || echo "App already exists, skipping creation"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
 
@@ -59,13 +59,13 @@ jobs:
                        EMAIL_CLIENT_SECRET="${EMAIL_CLIENT_SECRET}" \
                        EMAIL_ACCESS_TOKEN="${EMAIL_ACCESS_TOKEN}" \
                        EMAIL_REFRESH_TOKEN="${EMAIL_REFRESH_TOKEN}" \
-                       --app "offchain-server" --stage
+                       --app "fueldao-offchain-server" --stage
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
 
 
       # - name: Reset Fly.io app state
-      #   run: flyctl apps restart --app "offchain-server"
+      #   run: flyctl apps restart --app "fueldao-offchain-server"
       #   env:
       #     FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
 
