@@ -1,0 +1,82 @@
+name: Build and Check linting
+
+on:
+  workflow_call:
+    inputs:
+      publish-artifact:
+        default: false
+        required: false
+        type: boolean
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build Check
+    runs-on: ubuntu-latest
+
+    env:
+      BACKEND: ${{ secrets.BACKEND }}
+      RUST_LOG: ${{ secrets.RUST_LOG }}
+      SERVER_PORT: ${{ secrets.SERVER_PORT }}
+      EMAIL_CLIENT_ID: ${{ secrets.EMAIL_CLIENT_ID }}
+      EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
+      EMAIL_ACCESS_TOKEN: ${{ secrets.EMAIL_ACCESS_TOKEN }}
+      EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Cache install Nix packages
+        uses: rikhuijzer/cache-install@v1.1.4
+        with:
+          key: nix-${{ hashFiles('default.nix') }}
+
+      - name: Cache Rust dependencies, build output, and DFX build cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+            .dfx/
+          key: rust-test-${{ hashFiles('**/Cargo.lock') }}
+
+      # - name: List Nix Store Contents
+      #   run: |
+      #     if [ -d /nix/store/vch2iblvryxwsgh4zz5k341c10cja06i-nix-shell ]; then
+      #       ls -l /nix/store/vch2iblvryxwsgh4zz5k341c10cja06i-nix-shell/
+      #     else
+      #       echo "/nix/store/vch2iblvryxwsgh4zz5k341c10cja06i-nix-shell is not a directory"
+      #     fi
+      - name: Create cargo config
+        run: |
+          mkdir -p ~/.cargo
+          echo '[target.x86_64-unknown-linux-musl]' > ~/.cargo/config.toml
+          echo 'linker = "x86_64-linux-musl-gcc"' >> ~/.cargo/config.toml
+
+      - name: Build
+        run: nix-shell --run 'cargo build --release --target x86_64-unknown-linux-musl --verbose'
+        env:
+          TARGET_CC: x86_64-linux-musl-gcc
+          OPENSSL_DIR: /usr
+          OPENSSL_INCLUDE_DIR: /usr/include
+          OPENSSL_LIB_DIR: /usr/lib/x86_64-linux-gnu
+      - run: touch .empty
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ inputs.publish-artifact }}
+        with:
+          name: build-musl
+          path: |
+            target/x86_64-unknown-linux-musl/release/fuel-dao-off-chain-backend
+            .empty
