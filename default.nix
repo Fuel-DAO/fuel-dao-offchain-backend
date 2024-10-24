@@ -120,9 +120,15 @@ dfx-env.overrideAttrs (old: {
     rustup component add rustfmt
     rustup component add clippy
 
-    # Enhanced cargo config
-    mkdir -p ~/.cargo
-    cat > ~/.cargo/config.toml << EOF
+      # Fix the cargo config creation
+     mkdir -p ~/.cargo
+    cat > ~/.cargo/config.toml << 'EOF'
+
+
+
+    [target.x86_64-unknown-linux-gnu]
+    linker = "gcc"
+
     [target.x86_64-unknown-linux-musl]
     rustflags = [
       "-C", "target-feature=+crt-static",
