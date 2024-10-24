@@ -33,7 +33,7 @@ k256 = { version = "0.13.4", default-features = false, features = [
 ] }
 dotenv_codegen = "0.15.0"
 dotenv = "*"
-reqwest = "0.12.8"
+reqwest = {version = "0.12.8", features = ["rustls-tls"]}
 base64 = "0.22.1"
 time = {version = "0.3.36", features = ["formatting", "parsing"]}
 serde_json = "1.0.128"
