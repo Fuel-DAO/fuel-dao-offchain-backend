@@ -86,6 +86,19 @@ dfx-env.overrideAttrs (old: {
     export AR_x86_64_unknown_linux_musl="${pkgs.muslPackages.stdenv.cc}/bin/x86_64-unknown-linux-musl-ar"
     export CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER="${pkgs.muslPackages.stdenv.cc}/bin/x86_64-unknown-linux-musl-gcc"
 
+      # Add these lines at the beginning of your shellHook
+  export CARGO_BUILD_TARGET="x86_64-unknown-linux-musl"
+  export CARGO_TARGET_DIR="target"
+  export HOST_CC="gcc"
+  export CC="gcc"
+
+  # Modify your existing RUSTFLAGS
+  export RUSTFLAGS="-C target-feature=+crt-static -C linker=${pkgs.muslPackages.stdenv.cc}/bin/x86_64-unknown-linux-musl-gcc"
+
+  # Add these environment variables
+  export CARGO_BUILD_RUSTFLAGS="$RUSTFLAGS"
+  export CARGO_ENCODED_RUSTFLAGS="$RUSTFLAGS"
+
     # Static linking configuration
     export RUSTFLAGS="-C target-feature=+crt-static -C link-arg=-static"
     export OPENSSL_STATIC=1
