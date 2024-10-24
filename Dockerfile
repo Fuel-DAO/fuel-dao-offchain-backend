@@ -1,14 +1,11 @@
-FROM debian:bookworm-20240211
-
+FROM alpine:3.19
 WORKDIR /app
-
-COPY ./target/x86_64-unknown-linux-musl/release/offchain_server.
-
-RUN apt-get update \
-    && apt-get install -y ca-certificates \
-    && apt-get -y install curl
+COPY ./target/x86_64-unknown-linux-musl/release/offchain_server ./offchain_server
+RUN chmod +x /app/offchain_server \
+    && apk add --no-cache ca-certificates curl
 
 EXPOSE 50051
+CMD ["/app/offchain_server"]
 
 # Latest releases available at https://github.com/aptible/supercronic/releases
 # ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.2.29/supercronic-linux-amd64 \
