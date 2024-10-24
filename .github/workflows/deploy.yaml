@@ -1,0 +1,49 @@
+name: Deploy to Fly.io
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+
+jobs:
+  build_check:
+    uses: ./.github/workflows/build-check.yml
+    with:
+      publish-artifact: true
+
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
+  FLY_ORG_ID: fuel-dao
+  BACKEND: ${{ secrets.BACKEND }}
+  RUST_LOG: ${{ secrets.RUST_LOG }}
+  SERVER_PORT: ${{ secrets.SERVER_PORT }}
+  EMAIL_CLIENT_ID: ${{ secrets.EMAIL_CLIENT_ID }}
+  EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
+  EMAIL_ACCESS_TOKEN: ${{ secrets.EMAIL_ACCESS_TOKEN }}
+  EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
+
+jobs:
+  deploy:
+    name: Deploy app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: chmod +x target/x86_64-unknown-linux-musl/release/offchain_server
+
+
+
+      - name: Verify App Existence
+        run: flyctl apps list
+
+      - name: Deploy to Fly.io
+        run: flyctl deploy -a fuel-dao-offchain-backend
+ # Specify the app name here

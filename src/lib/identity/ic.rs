@@ -1,7 +1,6 @@
 use std::{env, sync::Arc};
 
 use candid::Principal;
-use dotenv_codegen::dotenv;
 use ic_agent::{agent::AgentBuilder, Agent, Identity};
 
 const LIVE_AGENT_URL: &str = "https://ic0.app";

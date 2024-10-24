@@ -14,6 +14,14 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  BACKEND: ${{ secrets.BACKEND }}
+  RUST_LOG: ${{ secrets.RUST_LOG }}
+  SERVER_PORT: ${{ secrets.SERVER_PORT }}
+  EMAIL_CLIENT_ID: ${{ secrets.EMAIL_CLIENT_ID }}
+  EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
+  EMAIL_ACCESS_TOKEN: ${{ secrets.EMAIL_ACCESS_TOKEN }}
+  EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
+  
 
 jobs:
   build:
