@@ -1,6 +1,4 @@
 use anyhow::Result;
-#[macro_use]
-extern crate dotenv_codegen;
 
 mod build_common {
     use std::{collections::HashMap, env, ffi::OsStr, fs, io, path::PathBuf};
@@ -67,9 +65,10 @@ mod build_common {
     }
 
     fn build_did_intf() -> Result<()> {
+        dotenv::dotenv().ok();
         println!("cargo:rerun-if-changed=./did/*");
 
-        let is_dev = dotenv!("BACKEND") == "LOCAL";
+        let is_dev = env::var("BACKEND").unwrap_or("LIVE".to_string()) == "LOCAL";
 
         let mut candid_config: candid_parser::bindings::rust::Config = candid_parser::bindings::rust::Config::new();
         candid_config.set_target(candid_parser::bindings::rust::Target::Agent);

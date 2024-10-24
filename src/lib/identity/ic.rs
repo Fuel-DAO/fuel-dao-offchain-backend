@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{env, sync::Arc};
 
 use candid::Principal;
 use dotenv_codegen::dotenv;
@@ -14,7 +14,9 @@ pub struct AgentWrapper(Agent);
 impl AgentWrapper {
     pub fn build(builder_func: impl FnOnce(AgentBuilder) -> AgentBuilder) -> Self {
 
-        let live = dotenv!("BACKEND") == "LIVE" ;
+        dotenv::dotenv().ok();
+
+        let live = env::var("BACKEND").unwrap_or("LIVE".to_string()) == "LIVE" ;
 
         let url = if live {
             LIVE_AGENT_URL
