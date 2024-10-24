@@ -7,10 +7,10 @@ on:
         default: false
         required: false
         type: boolean
-  workflow_dispatch:
-  pull_request:
-    branches:
-      - main
+  # workflow_dispatch:
+  # pull_request:
+  #   branches:
+  #     - main
 
 env:
   CARGO_TERM_COLOR: always
