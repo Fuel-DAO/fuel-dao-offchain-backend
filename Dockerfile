@@ -16,7 +16,7 @@ COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && echo "fn main() {}" > src/main.rs
 RUN rustup default stable && rustup update
 RUN rustup target add x86_64-unknown-linux-musl
-RUN cargo build --target x86_64-unknown-linux-musl --release
+# RUN cargo build --target x86_64-unknown-linux-musl --release
 
 # Copy the rest of the source files and build the application
 COPY . .
