@@ -49,11 +49,11 @@ dfx-env.overrideAttrs (old: {
       trunk
       musl
       gcc
-      muslPackages.stdenv.cc  # Add musl-specific compiler
-      file                    # For file type identification
-      gnumake                 # Make build system
-      binutils               # Basic binary utilities
-      binutils.bintools      # Additional binary tools
+      muslPackages.stdenv.cc
+      file
+      gnumake
+      binutils
+      binutils.bintools
     ] ++ (if pkgs.stdenv.isDarwin then [
       darwin.apple_sdk.frameworks.Foundation
       pkgs.darwin.libiconv
@@ -62,9 +62,9 @@ dfx-env.overrideAttrs (old: {
   # Build dependencies for cross-compilation
   buildInputs = with pkgs; old.buildInputs ++ [
     openssl.dev
-    muslPackages.stdenv.cc.libc  # Add musl libc
+    muslPackages.stdenv.cc.libc
     zlib.dev
-    zlib.static                  # Static zlib for musl builds
+    zlib.static
   ];
 
   # Environment variables for cross-compilation
@@ -72,6 +72,10 @@ dfx-env.overrideAttrs (old: {
 
   # Shell hooks (executed when the shell starts)
   shellHook = ''
+    # Create necessary directories
+    mkdir -p $HOME/.cargo/bin
+    export PATH="$HOME/.cargo/bin:$PATH"
+
     # Setup cross-compilation environment
     export CC_x86_64_unknown_linux_musl="${pkgs.muslPackages.stdenv.cc}/bin/x86_64-unknown-linux-musl-gcc"
     export CXX_x86_64_unknown_linux_musl="${pkgs.muslPackages.stdenv.cc}/bin/x86_64-unknown-linux-musl-g++"
@@ -102,18 +106,24 @@ dfx-env.overrideAttrs (old: {
     ]
     EOF
 
-    # Install candid-extractor
-    cargo install --root $out --force candid-extractor
-    ln -sf $out/bin/candid-extractor $out/bin/candid-extractor
-
-    # Add Node.js and npm binaries to PATH
-    export PATH="$out/bin:$PATH"
+    # Install candid-extractor in user's cargo directory instead of nix store
+    if ! command -v candid-extractor &> /dev/null; then
+      echo "Installing candid-extractor..."
+      cargo install --quiet candid-extractor
+    fi
 
     # Print versions
     echo "Node.js version: $(node -v)"
     echo "npm version: $(npm -v)"
     echo "Trunk version: $(trunk -V)"
     echo "GCC version: $(gcc --version | head -n1)"
-    echo "Musl CC version: ${pkgs.muslPackages.stdenv.cc}/bin/x86_64-unknown-linux-musl-gcc --version | head -n1)"
+    echo "Musl CC version: $(${pkgs.muslPackages.stdenv.cc}/bin/x86_64-unknown-linux-musl-gcc --version | head -n1)"
+
+    # Print candid-extractor version if installed
+    if command -v candid-extractor &> /dev/null; then
+      echo "candid-extractor is installed in $(which candid-extractor)"
+    else
+      echo "Warning: candid-extractor installation failed"
+    fi
   '';
 })
