@@ -28,6 +28,7 @@ jobs:
       EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
       EMAIL_ACCESS_TOKEN: ${{ secrets.EMAIL_ACCESS_TOKEN }}
       EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
+      OPENSSL_STATIC: 1
 
     steps:
       - name: Checkout repository and submodules
@@ -37,7 +38,7 @@ jobs:
 
       - name: Install prereqs
         run: |
-          sudo apt-get install musl-tools libssl-dev
+          sudo apt-get install pkg-config musl-tools libssl-dev openssl-libs-static openssl-dev
 
 
       - name: Rust Setup
