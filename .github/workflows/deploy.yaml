@@ -28,6 +28,7 @@ jobs:
       publish-artifact: true
   deploy:
     name: Deploy app
+    needs: build_check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
