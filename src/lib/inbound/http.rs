@@ -3,10 +3,11 @@
     implementation is opaque to module consumers.
 */
 
-use std::sync::Arc;
+use std::{net::SocketAddr, sync::Arc};
 
 use anyhow::Context;
-use axum::{Router, routing::post};
+use axum::{routing::{get, post}, Router};
+use reqwest::StatusCode;
 use tokio::net;
 
 use crate::domain::transactions::ports::TransactionService; // Update this to your correct path
@@ -51,11 +52,15 @@ impl HttpServer {
         };
 
         let router = axum::Router::new()
+            .route("/health", get(health_route))
             .nest("/api", api_routes())
             .layer(trace_layer)
             .with_state(state);
 
-        let listener = net::TcpListener::bind(format!("0.0.0.0:{}", config.port))
+        let addr = SocketAddr::from(([0, 0, 0, 0, 0, 0, 0, 0], config.port.parse::<u16>()?));
+
+
+        let listener = net::TcpListener::bind(&addr)
             .await
             .with_context(|| format!("failed to listen on {}", config.port))?;
 
@@ -74,4 +79,8 @@ impl HttpServer {
 
 fn api_routes<TS: TransactionService>() -> Router<AppState<TS>> {
     Router::new().route("/transactions", post(create_transaction::<TS>)) // Route for creating transactions
+}
+
+async fn health_route() -> (StatusCode, &'static str) {
+    (StatusCode::OK, "OK")
 }
