@@ -50,8 +50,19 @@ jobs:
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
+      - name: Set Fly.io secrets
+        run: |
+          flyctl secrets set BACKEND="${BACKEND}" \
+                       RUST_LOG="${RUST_LOG}" \
+                       SERVER_PORT="${SERVER_PORT}" \
+                       EMAIL_CLIENT_ID="${EMAIL_CLIENT_ID}" \
+                       EMAIL_CLIENT_SECRET="${EMAIL_CLIENT_SECRET}" \
+                       EMAIL_ACCESS_TOKEN="${EMAIL_ACCESS_TOKEN}" \
+                       EMAIL_REFRESH_TOKEN="${EMAIL_REFRESH_TOKEN}" \
+                       --app "offchain-server" --stage
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Deploy a docker container to fly.io
-        run: fly logs -i 6e823e1c730438
         run: flyctl deploy --remote-only --depot=false
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
