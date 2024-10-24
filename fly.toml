@@ -3,7 +3,7 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'offchain_server'
+app = 'offchain-server'
 primary_region = 'sin'
 kill_signal = 'SIGINT'
 kill_timeout = '5s'
@@ -16,7 +16,7 @@ PORT = '8080'
 [processes]
 # The command below is used to launch a Rails server; be sure to
 # replace with the command you're using to launch your server.
-web = "./offchain_server"
+web = "./offchain-server"
 # cron = "supercronic /app/crontab"
 
 [[services]]

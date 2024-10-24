@@ -8,7 +8,7 @@ name = "offchain"
 path = "src/lib/lib.rs"
 
 [[bin]]
-name = "offchain_server"
+name = "offchain-server"
 path = "src/bin/server/main.rs"
 
 [dependencies]
