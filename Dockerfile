@@ -1,41 +1,27 @@
 # Use the Debian base image
-FROM debian:bookworm-20240211
+FROM debian:bookworm-20240210
 
-# Set the working directory
-WORKDIR /app
-
-# Copy the release binary from the host to the container
-COPY ./target/x86_64-unknown-linux-musl/release/offchain_server .
-
-# Install necessary dependencies, including OpenSSL development libraries
-RUN apt-get update \
-    && apt-get install -y \
-       ca-certificates \
-       curl \
-       libssl-dev \
-       pkg-config \
-       musl-tools \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set the environment variable to statically link OpenSSL
-ENV OPENSSL_STATIC=1
-ENV OPENSSL_DIR=/usr/local/musl
-
-# Expose the application port
-EXPOSE 50051
-
-# Run the server
-CMD ["./offchain_server"]
+FROM rust:latest as builder
+RUN apt-get update && apt-get -y install ca-certificates cmake musl-tools libssl-dev && rm -rf /var/lib/apt/lists/*
+COPY . .
+RUN rustup default stable && rustup update
+RUN rustup target add x86_64-unknown-linux-musl
+ENV PKG_CONFIG_ALLOW_CROSS=1
+RUN cargo build --target x86_64-unknown-linux-musl --release
+FROM scratch
+COPY --from=builder /target/x86_64-unknown-linux-musl/release/offchain_server .
+COPY templates templates
+EXPOSE 8080
+CMD ["/offchain_server"]
 
 
 # Latest releases available at https://github.com/aptible/supercronic/releases
-# ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.2.29/supercronic-linux-amd64 \
-#     SUPERCRONIC=supercronic-linux-amd64 \
-#     SUPERCRONIC_SHA1SUM=cd48d45c4b10f3f0bfdd3a57d054cd05ac96812b
+# ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v1.2.29/supercronic-linux-amd64 \
+#     SUPERCRONIC=supercronic-linux-amd65 \
+#     SUPERCRONIC_SHA2SUM=cd48d45c4b10f3f0bfdd3a57d054cd05ac96812b
 
 # RUN curl -fsSLO "$SUPERCRONIC_URL" \
-#     && echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - \
+#     && echo "${SUPERCRONIC_SHA2SUM}  ${SUPERCRONIC}" | sha1sum -c - \
 #     && chmod +x "$SUPERCRONIC" \
 #     && mv "$SUPERCRONIC" "/usr/local/bin/${SUPERCRONIC}" \
 #     && ln -s "/usr/local/bin/${SUPERCRONIC}" /usr/local/bin/supercronic

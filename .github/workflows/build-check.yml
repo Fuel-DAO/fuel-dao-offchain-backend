@@ -1,4 +1,5 @@
-name: build and check linting
+name: Build and Check linting
+
 on:
   workflow_call:
     inputs:
@@ -10,64 +11,66 @@ on:
   pull_request:
     branches:
       - main
+
 env:
-  cargo_term_color: always
+  CARGO_TERM_COLOR: always
+
 jobs:
   build:
     name: build check
     runs-on: ubuntu-latest
+
     env:
-      backend: ${{ secrets.backend }}
-      rust_log: ${{ secrets.rust_log }}
-      server_port: ${{ secrets.server_port }}
-      email_client_id: ${{ secrets.email_client_id }}
-      email_client_secret: ${{ secrets.email_client_secret }}
-      email_access_token: ${{ secrets.email_access_token }}
-      email_refresh_token: ${{ secrets.email_refresh_token }}
+      BACKEND: ${{ secrets.BACKEND }}
+      RUST_LOG: ${{ secrets.RUST_LOG }}
+      SERVER_PORT: ${{ secrets.SERVER_PORT }}
+      EMAIL_CLIENT_ID: ${{ secrets.EMAIL_CLIENT_ID }}
+      EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
+      EMAIL_ACCESS_TOKEN: ${{ secrets.EMAIL_ACCESS_TOKEN }}
+      EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
+      # OPENSSL_STATIC: 1
+
     steps:
-      - name: checkout repository and submodules
+      - name: Checkout repository and submodules
         uses: actions/checkout@v3
         with:
           submodules: recursive
 
-      - name: Install build dependencies
+      - name: Install prereqs
         run: |
-          sudo apt-get update
-          sudo apt-get install -y musl-tools pkg-config build-essential
-          sudo apt-get install -y libssl-dev
-          sudo apt-get install -y libcurl4-openssl-dev
+          sudo apt-get install pkg-config musl-tools libssl-dev
 
-      - name: rust setup
+      - name: Rust Setup
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: "stable"
           targets: "x86_64-unknown-linux-musl"
 
-      - name: build setup
+      - name: Build setup
         run: |
           rustup target add x86_64-unknown-linux-musl
           rustup component add rustfmt
           rustup component add clippy
-
       # - name: lint check
       #   run: |
       #     cargo fmt --check
-      #     cargo clippy --no-deps --all-features --release -- -dwarnings
-
+      #     cargo clippy --no-deps --all-features --release -- -Dwarnings
       - name: Build
+        run: cargo build --release --target x86_64-unknown-linux-musl
         env:
-          PKG_CONFIG_ALLOW_CROSS: 1
-          OPENSSL_DIR: /usr/local/musl
-          PKG_CONFIG_PATH: /usr/local/musl/lib/pkgconfig
-          PKG_CONFIG_SYSROOT_DIR: /usr/local/musl
-          OPENSSL_STATIC: 1
-        run: |
-          sudo ln -s /usr/include/x86_64-linux-gnu/asm /usr/include/x86_64-linux-musl/asm && sudo ln -s /usr/include/asm-generic /usr/include/x86_64-linux-musl/asm-generic && sudo ln -s /usr/include/linux /usr/include/x86_64-linux-musl/linux
-          cargo build --target x86_64-unknown-linux-musl --release
+          TARGET_CC: x86_64-linux-musl-gcc
+          BACKEND: ${{ secrets.BACKEND }}
+          RUST_LOG: ${{ secrets.RUST_LOG }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+          EMAIL_CLIENT_ID: ${{ secrets.EMAIL_CLIENT_ID }}
+          EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
+          EMAIL_ACCESS_TOKEN: ${{ secrets.EMAIL_ACCESS_TOKEN }}
+          EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
 
+      # - name: Run tests
+      #   run: cargo test --verbose
       - run: touch .empty
-
-      - name: archive production artifacts
+      - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         if: ${{ inputs.publish-artifact }}
         with:
