@@ -20,6 +20,7 @@ RUN rustup target add x86_64-unknown-linux-musl
 
 # Copy the rest of the source files and build the application
 COPY . .
+RUN ls -la src/lib/
 RUN cargo build --target x86_64-unknown-linux-musl --release
 
 # Stage 2: Create a minimal final image
