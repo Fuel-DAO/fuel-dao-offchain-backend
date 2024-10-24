@@ -11,6 +11,8 @@ WORKDIR /app
 
 # Copy the Cargo files first to optimize Docker cache
 COPY Cargo.toml Cargo.lock ./
+# Ensure source structure is correct
+COPY src src
 
 # Create a dummy src directory and run a build to cache dependencies
 RUN mkdir src && echo "fn main() {}" > src/main.rs
