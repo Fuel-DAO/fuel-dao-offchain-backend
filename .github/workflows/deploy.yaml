@@ -23,7 +23,7 @@ env:
 
 jobs:
   build_check:
-    uses: ./.github/workflows/build-check.yml
+    uses: ./.github/workflows/build-check.yaml
     with:
       publish-artifact: true
   deploy:
