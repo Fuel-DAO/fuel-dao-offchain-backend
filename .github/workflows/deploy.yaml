@@ -9,8 +9,6 @@ on:
     branches:
       - main
 
-
-
 env:
   FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
   BACKEND: ${{ secrets.BACKEND }}
@@ -39,15 +37,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Flyctl
-        uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: chmod +x target/x86_64-unknown-linux-musl/release/offchain_server
-
-
+      # - name: Setup Flyctl
+      #   uses: superfly/flyctl-actions/setup-flyctl@master
+      # - run: chmod +x target/x86_64-unknown-linux-musl/release/offchain_server
 
       - name: Verify App Existence
         run: flyctl apps list
 
       - name: Deploy to Fly.io
         run: flyctl deploy -a fuel-dao-offchain-backend --org fuel-dao
- # Specify the app name here
+  # Specify the app name here
