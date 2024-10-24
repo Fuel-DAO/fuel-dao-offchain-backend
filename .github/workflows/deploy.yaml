@@ -61,6 +61,12 @@ jobs:
                        EMAIL_REFRESH_TOKEN="${EMAIL_REFRESH_TOKEN}" \
                        --app "offchain-server" --stage
 
+
+      - name: Reset Fly.io app state
+        run: flyctl apps reset --app "offchain-server"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
+
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Deploy a docker container to fly.io
         run: flyctl deploy --remote-only --depot=false
