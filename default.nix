@@ -92,9 +92,8 @@ dfx-env.overrideAttrs (old: {
   export HOST_CC="gcc"
   export CC="gcc"
 
-  export CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER="${pkgs.muslPackages.stdenv.cc}/bin/x86_64-unknown-linux-musl-gcc"
-export CARGO_BUILD_TARGET="x86_64-unknown-linux-musl"
-export RUSTFLAGS="-C target-feature=+crt-static -C linker=${pkgs.muslPackages.stdenv.cc}/bin/x86_64-unknown-linux-musl-gcc"
+  # Modify your existing RUSTFLAGS
+  export RUSTFLAGS="-C target-feature=+crt-static -C linker=${pkgs.muslPackages.stdenv.cc}/bin/x86_64-unknown-linux-musl-gcc"
 
   # Add these environment variables
   export CARGO_BUILD_RUSTFLAGS="$RUSTFLAGS"
@@ -121,9 +120,7 @@ export RUSTFLAGS="-C target-feature=+crt-static -C linker=${pkgs.muslPackages.st
     rustup component add rustfmt
     rustup component add clippy
 
-
-    [target.x86_64-unknown-linux-gnu]
-    linker = "gcc"
+    # Enhanced cargo config
 
     [target.x86_64-unknown-linux-musl]
     rustflags = [
