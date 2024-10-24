@@ -80,11 +80,6 @@ jobs:
           EMAIL_ACCESS_TOKEN: ${{ secrets.EMAIL_ACCESS_TOKEN }}
           EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
 
-      - name: Verify build output
-        run: |
-          ls -la target/x86_64-unknown-linux-musl/release/
-          file target/x86_64-unknown-linux-musl/release/offchain_server || echo "Binary not found"
-
       # - name: Run tests
       #   run: cargo test --verbose
       - run: touch .empty
