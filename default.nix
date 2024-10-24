@@ -120,6 +120,5 @@ dfx-env.overrideAttrs (old: {
     echo "Trunk version: $(trunk -V)"
     echo "GCC version: $(gcc --version | head -n1)"
     echo "Rust version: $(rustc --version)"
-    echo "Musl CC version: $(${CC_x86_64_unknown_linux_musl} --version | head -n1)"
   '';
 })
