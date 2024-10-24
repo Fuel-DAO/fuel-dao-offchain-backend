@@ -60,6 +60,8 @@ jobs:
                        EMAIL_ACCESS_TOKEN="${EMAIL_ACCESS_TOKEN}" \
                        EMAIL_REFRESH_TOKEN="${EMAIL_REFRESH_TOKEN}" \
                        --app "offchain-server" --stage
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
 
 
       - name: Reset Fly.io app state
