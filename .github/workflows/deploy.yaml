@@ -37,5 +37,5 @@ jobs:
         run: flyctl apps list
 
       - name: Deploy to Fly.io
-        run: flyctl deploy -a offchain_server
+        run: flyctl deploy -a fuel-dao-offchain-backend
  # Specify the app name here
