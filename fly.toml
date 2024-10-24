@@ -1,23 +1,26 @@
-# fly.toml app configuration file for fuel-dao-offchain
+# fly.toml app configuration file generated for icp-off-chain-agent-test on 2024-04-12T17:29:18+05:30
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-app = "fuel-dao-offchain"
-primary_region = "sin"
-kill_signal = "SIGINT"
-kill_timeout = "5s"
+app = 'icp-off-chain-agent'
+primary_region = 'sin'
+kill_signal = 'SIGINT'
+kill_timeout = '5s'
 
 [build]
-# No specific build configuration needed, defaults will be used.
 
 [env]
-PORT = "8080"
-RUST_LOG = "info"  # Combine your environment variables here
+PORT = '8080'
 
 [processes]
-# The command below will launch the server; adjust if needed.
-web = "./target/x86_64-unknown-linux-musl/release/offchain_server"
+# The command below is used to launch a Rails server; be sure to
+# replace with the command you're using to launch your server.
+web = "./icp-off-chain-agent"
+# cron = "supercronic /app/crontab"
 
 [[services]]
-internal_port = 8080
+internal_port = 50051
 protocol = "tcp"
 processes = ["web"]
 
@@ -26,26 +29,11 @@ handlers = ["tls"]
 tls_options = { "alpn" = ["h2"], "versions" = ["TLSv1.2", "TLSv1.3"] }
 port = 443
 
-[[services.ports]]
-handlers = ["http"]
-port = 80
-
 [services.concurrency]
 hard_limit = 1000
 soft_limit = 500
 
-[experimental]
-auto_rollback = true
-
-# VM resources configuration.
-[deploy]
-strategy = "rolling"
-
 [[vm]]
-memory = "8gb"
-cpu_kind = "shared"
+memory = '8gb'
+cpu_kind = 'shared'
 cpus = 8
-
-[target.x86_64-unknown-linux-musl]
-linker = "musl-gcc"
-
