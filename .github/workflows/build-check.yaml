@@ -60,6 +60,14 @@ jobs:
         run: cargo build --release --target x86_64-unknown-linux-musl
         env:
           TARGET_CC: x86_64-linux-musl-gcc
+          BACKEND: ${{ secrets.BACKEND }}
+          RUST_LOG: ${{ secrets.RUST_LOG }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+          EMAIL_CLIENT_ID: ${{ secrets.EMAIL_CLIENT_ID }}
+          EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
+          EMAIL_ACCESS_TOKEN: ${{ secrets.EMAIL_ACCESS_TOKEN }}
+          EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }} 
+
       # - name: Run tests
       #   run: cargo test --verbose
       - run: touch .empty

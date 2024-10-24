@@ -13,7 +13,7 @@ path = "src/bin/server/main.rs"
 
 [dependencies]
 anyhow = "1.0.86"
-axum = "0.7.5"
+axum = { version = "0.7.6", features = ["macros", "json"] }
 derive_more = "0.99.17"
 serde = { version = "1", features = ["std", "derive"] }
 thiserror = "1.0.61"
