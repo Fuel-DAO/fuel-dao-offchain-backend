@@ -57,6 +57,11 @@ jobs:
       #     else
       #       echo "/nix/store/vch2iblvryxwsgh4zz5k341c10cja06i-nix-shell is not a directory"
       #     fi
+      - name: Create cargo config
+        run: |
+          mkdir -p ~/.cargo
+          echo '[target.x86_64-unknown-linux-musl]' > ~/.cargo/config.toml
+          echo 'linker = "x86_64-linux-musl-gcc"' >> ~/.cargo/config.toml
 
       - name: Build
         run: nix-shell --run 'cargo build --release --target x86_64-unknown-linux-musl --verbose'
