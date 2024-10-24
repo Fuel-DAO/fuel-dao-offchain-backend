@@ -16,18 +16,17 @@ jobs:
     with:
       publish-artifact: true
 
-  env:
-    FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
-    FLY_ORG_ID: fuel-dao
-    BACKEND: ${{ secrets.BACKEND }}
-    RUST_LOG: ${{ secrets.RUST_LOG }}
-    SERVER_PORT: ${{ secrets.SERVER_PORT }}
-    EMAIL_CLIENT_ID: ${{ secrets.EMAIL_CLIENT_ID }}
-    EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
-    EMAIL_ACCESS_TOKEN: ${{ secrets.EMAIL_ACCESS_TOKEN }}
-    EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
+  BACKEND: ${{ secrets.BACKEND }}
+  RUST_LOG: ${{ secrets.RUST_LOG }}
+  SERVER_PORT: ${{ secrets.SERVER_PORT }}
+  EMAIL_CLIENT_ID: ${{ secrets.EMAIL_CLIENT_ID }}
+  EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
+  EMAIL_ACCESS_TOKEN: ${{ secrets.EMAIL_ACCESS_TOKEN }}
+  EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
 
-
+jobs:
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
@@ -38,6 +37,7 @@ jobs:
       - name: Setup Flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
       - run: chmod +x target/x86_64-unknown-linux-musl/release/offchain_server
+
 
 
       - name: Verify App Existence
