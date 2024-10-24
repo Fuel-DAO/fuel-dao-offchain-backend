@@ -121,10 +121,6 @@ export RUSTFLAGS="-C target-feature=+crt-static -C linker=${pkgs.muslPackages.st
     rustup component add rustfmt
     rustup component add clippy
 
-      mkdir -p ~/.cargo
-cat > ~/.cargo/config.toml << 'EOF'
-
-
 
     [target.x86_64-unknown-linux-gnu]
     linker = "gcc"
