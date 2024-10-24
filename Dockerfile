@@ -1,11 +1,33 @@
-FROM alpine:3.19
-WORKDIR /app
-COPY ./target/x86_64-unknown-linux-musl/release/offchain_server ./offchain_server
-RUN chmod +x /app/offchain_server \
-    && apk add --no-cache ca-certificates curl
+# Use the Debian base image
+FROM debian:bookworm-20240211
 
+# Set the working directory
+WORKDIR /app
+
+# Copy the release binary from the host to the container
+COPY ./target/x86_64-unknown-linux-musl/release/offchain_server .
+
+# Install necessary dependencies, including OpenSSL development libraries
+RUN apt-get update \
+    && apt-get install -y \
+       ca-certificates \
+       curl \
+       libssl-dev \
+       pkg-config \
+       musl-tools \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the environment variable to statically link OpenSSL
+ENV OPENSSL_STATIC=1
+ENV OPENSSL_DIR=/usr/local/musl
+
+# Expose the application port
 EXPOSE 50051
-CMD ["/app/offchain_server"]
+
+# Run the server
+CMD ["./offchain_server"]
+
 
 # Latest releases available at https://github.com/aptible/supercronic/releases
 # ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.2.29/supercronic-linux-amd64 \
