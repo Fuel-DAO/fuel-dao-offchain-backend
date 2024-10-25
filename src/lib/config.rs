@@ -28,16 +28,16 @@ impl Config {
 
         dotenv::dotenv().ok();
 
-        let server_port = load_env(SERVER_PORT_KEY)?;
+        let server_port = load_env(SERVER_PORT_KEY).unwrap_or("50051".to_string());
 
 
-        let live_or_local = load_env(BACKEND_LIVE_OR_LOCAL)?;
+        let live_or_local = load_env(BACKEND_LIVE_OR_LOCAL).unwrap_or("LIVE".to_string());
 
         let email_config =   EmailConfig {
-                client_id: load_env(EMAIL_CLIENT_ID)?,
-                client_secret: load_env(EMAIL_CLIENT_SECRET)?,
-                refresh_token: load_env(EMAIL_REFRESH_TOKEN)?,
-                access_token: load_env(EMAIL_ACCESS_TOKEN)?,
+                client_id: load_env(EMAIL_CLIENT_ID).ok(),
+                client_secret: load_env(EMAIL_CLIENT_SECRET).ok(),
+                refresh_token: load_env(EMAIL_REFRESH_TOKEN).ok(),
+                access_token: load_env(EMAIL_ACCESS_TOKEN).ok(),
                 token_expiry:  SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs(),
         }  ;
 

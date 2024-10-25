@@ -15,10 +15,10 @@ pub struct EmailClient(Arc<Mutex<EmailConfig>>);
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EmailConfig {
-    pub client_id: String,
-    pub client_secret: String,
-    pub access_token: String,
-    pub refresh_token: String,
+    pub client_id: Option<String>,
+    pub client_secret: Option<String>,
+    pub access_token: Option<String>,
+    pub refresh_token: Option<String>,
     pub token_expiry: u64, // Store the token expiration timestamp
 }
 
@@ -37,7 +37,13 @@ impl EmailClient {
     fn get_config(&self) -> anyhow::Result<EmailConfig> {
         let email_config_clone = Arc::clone(&self.0);
         match email_config_clone.clone().lock() {
-            Ok(config) => Ok(config.clone()),
+            Ok(config) => {
+                if config.access_token.is_some() {
+                    Ok(config.clone())
+                } else {
+                    Err(anyhow!("Could not find email config"))
+                }
+            },
             Err(e) => Err(anyhow!("Could not lock email config: {e}")),
         }
     }
@@ -50,7 +56,7 @@ impl EmailClient {
                 params.insert("client_secret", &config.client_secret);
                 params.insert("client_id", &config.client_id);
                 params.insert("refresh_token", &config.refresh_token);
-                let grant_type = "refresh_token".to_string();
+                let grant_type = Some("refresh_token".to_string());
                 params.insert("grant_type", &grant_type);
 
                 let response = client
@@ -62,7 +68,7 @@ impl EmailClient {
                 if response.status().is_success() {
                     let token_response: TokenResponse = response.json().await?;
                     let mut email_config = self.0.lock().unwrap();
-                    email_config.access_token = token_response.access_token;
+                    email_config.access_token = Some(token_response.access_token);
                     
                     // Update token_expiry based on the current time
                     let current_time = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
@@ -114,7 +120,7 @@ impl EmailClient {
 
                 let client = Client::new();
                 let mut headers = HeaderMap::new();
-                headers.insert("Authorization", HeaderValue::from_str(&format!("Bearer {}", access_token)).unwrap());
+                headers.insert("Authorization", HeaderValue::from_str(&format!("Bearer {}", access_token.unwrap())).unwrap());
                 headers.insert("Content-Type", HeaderValue::from_str("application/json").unwrap());
 
                 let response = client
