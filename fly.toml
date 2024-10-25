@@ -12,6 +12,7 @@ kill_timeout = '5s'
 
 [env]
 PORT = '8080'
+RUST_LOG = 'info'
 
 [deploy]
 strategy = "immediate"
@@ -37,6 +38,6 @@ hard_limit = 1000
 soft_limit = 500
 
 [[vm]]
-memory = '8gb'
+memory = '2gb'  # Adjust memory to 2 GB or 4 GB as needed
 cpu_kind = 'shared'
-cpus = 8
+cpus = 2        # Use 1 or 2 shared CPUs based on expected load
