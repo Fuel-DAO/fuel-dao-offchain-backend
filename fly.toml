@@ -8,10 +8,15 @@ primary_region = 'bom'
 kill_signal = 'SIGTERM'
 kill_timeout = '5s'
 
+[build]
+dockerfile = "Dockerfile"
+
 
 [env]
 SERVER_PORT="50051"
 RUST_LOG = 'info'
+EMAIL_CLIENT_ID = "462267493875-qe8r7afhg2gnto5pgdjfoquonel5oka2.apps.googleusercontent.com"
+
 
 [deploy]
 strategy = "immediate"
