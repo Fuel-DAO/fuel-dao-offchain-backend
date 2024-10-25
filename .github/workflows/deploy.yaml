@@ -13,13 +13,6 @@ on:
 
 env:
   FLY_IO_DEPLOY_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
-  BACKEND: ${{ secrets.BACKEND }}
-  RUST_LOG: ${{ secrets.RUST_LOG }}
-  SERVER_PORT: ${{ secrets.SERVER_PORT }}
-  EMAIL_CLIENT_ID: ${{ secrets.EMAIL_CLIENT_ID }}
-  EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
-  EMAIL_ACCESS_TOKEN: ${{ secrets.EMAIL_ACCESS_TOKEN }}
-  EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
 
 jobs:
   build_check:
@@ -48,37 +41,10 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
 
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-
-      - name: Set Fly.io secrets
-        run: |
-          flyctl secrets set BACKEND="${BACKEND}" \
-                       RUST_LOG="${RUST_LOG}" \
-                       SERVER_PORT="${SERVER_PORT}" \
-                       EMAIL_CLIENT_ID="${EMAIL_CLIENT_ID}" \
-                       EMAIL_CLIENT_SECRET="${EMAIL_CLIENT_SECRET}" \
-                       EMAIL_ACCESS_TOKEN="${EMAIL_ACCESS_TOKEN}" \
-                       EMAIL_REFRESH_TOKEN="${EMAIL_REFRESH_TOKEN}" \
-                       --app "fueldao-offchain-server" --stage
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
-
-
-      # - name: Reset Fly.io app state
-      #   run: flyctl apps restart --app "fueldao-offchain-server"
-      #   env:
-      #     FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Deploy a docker container to fly.io
         run: flyctl deploy --remote-only --depot=false
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
-          BACKEND: ${{ secrets.BACKEND }}
-          RUST_LOG: ${{ secrets.RUST_LOG }}
-          SERVER_PORT: ${{ secrets.SERVER_PORT }}
-          EMAIL_CLIENT_ID: ${{ secrets.EMAIL_CLIENT_ID }}
-          EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
-          EMAIL_ACCESS_TOKEN: ${{ secrets.EMAIL_ACCESS_TOKEN }}
-          EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
  # Specify the app name here
