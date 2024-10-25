@@ -33,7 +33,7 @@ kill_timeout = '5s'
 # hard_limit = 1000
 # soft_limit = 500
 
-# [[vm]]
-# memory = '8gb'
-# cpu_kind = 'shared'
-# cpus = 8
+[[vm]]
+memory = '2gb'
+cpu_kind = 'shared'
+cpus = 2
