@@ -15,23 +15,19 @@ env:
   FLY_IO_DEPLOY_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
 
 jobs:
-  # build_check:
-  #   uses: ./.github/workflows/build-check.yaml
-  #   with:
-  #     publish-artifact: true
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
     steps:
-      # - uses: actions/checkout@v3
-      # - name: Download build
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: build-musl
-      # - name: Setup dfx
-      #   uses: dfinity/setup-dfx@main
+      - uses: actions/checkout@v3
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: build-musl
+      - name: Setup dfx
+        uses: dfinity/setup-dfx@main
 
-      # - run: chmod +x target/x86_64-unknown-linux-musl/release/fueldao-offchain-server
+      - run: chmod +x target/x86_64-unknown-linux-musl/release/fueldao-offchain-server
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Create Fly.io App (if not exists)
@@ -43,7 +39,7 @@ jobs:
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Deploy a docker container to fly.io
-        run: flyctl deploy --remote-only --depot=false
+        run: flyctl deploy --remote-only --depot=false -a "fueldao-offchain-server"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}
  # Specify the app name here
