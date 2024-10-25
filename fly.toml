@@ -4,11 +4,10 @@
 #
 
 app = 'fueldao-offchain-server'
-primary_region = 'sin'
-kill_signal = 'SIGINT'
+primary_region = 'bom'
+kill_signal = 'SIGTERM'
 kill_timeout = '5s'
 
-[build]
 
 [env]
 SERVER_PORT="50051"
@@ -17,16 +16,10 @@ RUST_LOG = 'info'
 [deploy]
 strategy = "immediate"
 
-[processes]
-# The command below is used to launch a Rails server; be sure to
-# replace with the command you're using to launch your server.
-web = "./fueldao-offchain-server"
-# cron = "supercronic /app/crontab"
 
 [[services]]
 internal_port = 50051
 protocol = "tcp"
-processes = ["web"]
 
 [[services.ports]]
 handlers = ["tls"]
