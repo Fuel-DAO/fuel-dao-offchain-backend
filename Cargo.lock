@@ -789,7 +789,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "fuel-dao-offchain"
+name = "fuel-dao-offchain-server"
 version = "0.1.0"
 dependencies = [
  "anyhow",

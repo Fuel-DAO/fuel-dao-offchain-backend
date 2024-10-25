@@ -1,35 +1,43 @@
-# fly.toml app configuration file for fueldao-offchain-server
+# fly.toml app configuration file generated for icp-off-chain-agent-test on 2024-04-12T17:29:18+05:30
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-app = "fueldao-offchain-server"
-primary_region = "sin"
-kill_signal = "SIGINT"
-kill_timeout = "5s"
+app = 'fueldao-offchain-server'
+primary_region = 'sin'
+kill_signal = 'SIGINT'
+kill_timeout = '5s'
 
+[build]
 
 [env]
-SERVER_PORT = "50051"
-RUST_LOG = "info"
+SERVER_PORT="50051"
+RUST_LOG = 'info'
 
 [deploy]
 strategy = "immediate"
 
 [processes]
+# The command below is used to launch a Rails server; be sure to
+# replace with the command you're using to launch your server.
 web = "./fueldao-offchain-server"
+# cron = "supercronic /app/crontab"
 
 [[services]]
 internal_port = 50051
 protocol = "tcp"
-auto_start_machines = true
-min_machines_running = 1
+processes = ["web"]
 
 [[services.ports]]
 handlers = ["tls"]
+tls_options = { "alpn" = ["h2"], "versions" = ["TLSv1.2", "TLSv1.3"] }
 port = 443
 
 [services.concurrency]
 hard_limit = 1000
 soft_limit = 500
 
-[metrics]
-port = 9090
-
+[[vm]]
+memory = '4gb'  # Adjust memory to 2 GB or 4 GB as needed
+cpu_kind = 'shared'
+cpus = 4        # Use 1 or 2 shared CPUs based on expected load

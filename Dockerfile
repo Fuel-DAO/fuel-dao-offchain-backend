@@ -11,7 +11,7 @@ RUN apt-get update \
 
 EXPOSE 50051
 
-CMD ./fueldao-offchain-server
+# CMD ./fueldao-offchain-server
 # Latest releases available at https://github.com/aptible/supercronic/releases
 # ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.2.29/supercronic-linux-amd64 \
 #     SUPERCRONIC=supercronic-linux-amd64 \
