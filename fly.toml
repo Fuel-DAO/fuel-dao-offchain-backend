@@ -2,11 +2,21 @@
 app = 'fueldao-offchain-server'
 primary_region = 'bom'
 
-[http_service]
-  internal_port = 50051
-  force_https = true
-  auto_start_machines = true
-  min_machines_running = 0
+[processes]
+# The command below is used to launch a Rails server; be sure to
+# replace with the command you're using to launch your server.
+web = "./fueldao-offchain-server"
+# cron = "supercronic /app/crontab"
+
+[[services]]
+internal_port = 50051
+protocol = "tcp"
+processes = ["web"]
+
+[[services.ports]]
+handlers = ["tls"]
+tls_options = { "alpn" = ["h2"], "versions" = ["TLSv1.2", "TLSv1.3"] }
+port = 443
 
 [[vm]]
   cpu_kind = "shared"

@@ -66,4 +66,4 @@ COPY --from=build /bin/fueldao-offchain-server /
 EXPOSE 50051
 
 # What the container should run when it is started.
-CMD ["/fueldao-offchain-server"]
+# CMD ["/fueldao-offchain-server"]
