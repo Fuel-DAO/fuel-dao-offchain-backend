@@ -57,6 +57,8 @@ impl HttpServer {
             .layer(trace_layer)
             .with_state(state);
 
+        tracing::info!("Config on {:?}", config);
+
         let addr = SocketAddr::from(([0, 0, 0, 0, 0, 0, 0, 0], config.port.parse::<u16>()?));
         // let addr =format!("0.0.0.0:{}", config.port);
 
