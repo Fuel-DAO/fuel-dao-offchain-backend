@@ -8,7 +8,19 @@ RUN apt-get update \
     && apt-get install -y ca-certificates \
     && apt-get -y install curl
 
+    ENV BACKEND=${BACKEND}
+    ENV RUST_LOG=${RUST_LOG}
+    ENV SERVER_PORT=${SERVER_PORT}
+    ENV EMAIL_CLIENT_ID=${EMAIL_CLIENT_ID}
+    ENV EMAIL_CLIENT_SECRET=${EMAIL_CLIENT_SECRET}
+    ENV EMAIL_ACCESS_TOKEN=${EMAIL_ACCESS_TOKEN}
+    ENV EMAIL_REFRESH_TOKEN=${EMAIL_REFRESH_TOKEN}
+    
+
 EXPOSE 50051
+
+CMD ["./fueldao-offchain-server"]
+
 
 # Latest releases available at https://github.com/aptible/supercronic/releases
 # ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.2.29/supercronic-linux-amd64 \
