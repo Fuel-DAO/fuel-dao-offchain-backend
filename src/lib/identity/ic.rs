@@ -17,11 +17,12 @@ impl AgentWrapper {
 
         let live = env::var("BACKEND").unwrap_or("LIVE".to_string()) == "LIVE" ;
 
-        let url = if live {
-            LIVE_AGENT_URL
-        } else {
-            LOCAL_AGENT_URL
-        };
+        let url = "https://ic0.app";
+        // let url = if live {
+        //     LIVE_AGENT_URL
+        // } else {
+        //     LOCAL_AGENT_URL
+        // };
 
         let mut builder =  Agent::builder().with_url(url);
         builder = builder_func(builder);
