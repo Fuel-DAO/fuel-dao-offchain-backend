@@ -4,26 +4,25 @@
 #
 
 app = 'fueldao-offchain-server'
-primary_region = 'bom'
-kill_signal = 'SIGTERM'
+primary_region = 'sin'
+kill_signal = 'SIGINT'
 kill_timeout = '5s'
 
 [build]
 
-
 [env]
-SERVER_PORT="50051"
-RUST_LOG = 'info'
-EMAIL_CLIENT_ID = "462267493875-qe8r7afhg2gnto5pgdjfoquonel5oka2.apps.googleusercontent.com"
+PORT = '8080'
 
-
-[deploy]
-strategy = "immediate"
-
+[processes]
+# The command below is used to launch a Rails server; be sure to
+# replace with the command you're using to launch your server.
+web = "./server"
+# cron = "supercronic /app/crontab"
 
 [[services]]
 internal_port = 50051
 protocol = "tcp"
+processes = ["web"]
 
 [[services.ports]]
 handlers = ["tls"]
@@ -35,6 +34,6 @@ hard_limit = 1000
 soft_limit = 500
 
 [[vm]]
-memory = '4gb'  # Adjust memory to 2 GB or 4 GB as needed
+memory = '8gb'
 cpu_kind = 'shared'
-cpus = 4        # Use 1 or 2 shared CPUs based on expected load
+cpus = 8

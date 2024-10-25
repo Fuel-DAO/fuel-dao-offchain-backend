@@ -66,4 +66,4 @@ COPY --from=build /bin/server /
 EXPOSE 50051
 
 # What the container should run when it is started.
-CMD ["/server"]
+# CMD ["/server"]
