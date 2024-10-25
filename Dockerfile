@@ -30,7 +30,7 @@ RUN --mount=type=bind,source=src,target=src \
     <<EOF
 set -e
 cargo build --locked --release
-cp ./target/release/$APP_NAME /bin/server
+cp ./target/release/$APP_NAME /bin/fueldao-offchain-server
 EOF
 
 ################################################################################
@@ -60,10 +60,10 @@ RUN adduser \
 USER appuser
 
 # Copy the executable from the "build" stage.
-COPY --from=build /bin/server /
+COPY --from=build /bin/fueldao-offchain-server /
 
 # Expose the port that the application listens on.
 EXPOSE 50051
 
 # What the container should run when it is started.
-CMD ["/server"]
+# CMD ["/fueldao-offchain-server"]
