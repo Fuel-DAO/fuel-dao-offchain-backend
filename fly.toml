@@ -10,6 +10,18 @@ kill_timeout = '5s'
 
 [build]
 
+[processes]
+web = "/server"
+
+[[services]]
+  processes = ["web"] # this service only applies to the web process
+  http_checks = []
+  internal_port = 50051
+  protocol = "tcp"
+  script_checks = []
+
+
+
 # [env]
 # PORT = '8080'
 
