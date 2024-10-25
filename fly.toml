@@ -11,7 +11,7 @@ kill_timeout = '5s'
 [build]
 
 [env]
-PORT = '8080'
+SERVER_PORT="50051"
 RUST_LOG = 'info'
 
 [deploy]
