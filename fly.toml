@@ -12,11 +12,19 @@ web = "./fueldao-offchain-server"
 internal_port = 50051
 protocol = "tcp"
 processes = ["web"]
+http_checks = []
 
 [[services.ports]]
-handlers = ["tls"]
-tls_options = { "alpn" = ["h2"], "versions" = ["TLSv1.2", "TLSv1.3"] }
+handlers = ["tls", "http"] 
+tls_options = { "versions" = ["TLSv1.2", "TLSv1.3"] } 
 port = 443
+
+[env]
+BACKEND = "LIVE"
+RUST_LOG="info"
+SERVER_PORT="50051"
+EMAIL_CLIENT_ID = "462267493875-qe8r7afhg2gnto5pgdjfoquonel5oka2.apps.googleusercontent.com"
+EMAIL_ACCESS_TOKEN = "ya29.a0AeDClZBmFrxsjUzf_zIcDbcOsk1kcHgSicxNHSDzFTUucVyFQCu2nVNN-zqvqnUGx85x05" # INVALID TOKEN ADDED
 
 [[vm]]
   cpu_kind = "shared"
