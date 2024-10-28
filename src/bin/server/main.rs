@@ -15,11 +15,11 @@ async fn main() -> anyhow::Result<()> {
     let prometheus = Prometheus::new();
     let email_client = EmailClient::new(config.email_config);
     let ic_agent = IcAgentTransactionRepository::new();
-    let blog_service = Service::new(ic_agent, prometheus, email_client);
+    let offchain_service = Service::new(ic_agent, prometheus, email_client);
 
     let server_config = HttpServerConfig {
         port: &config.server_port,
     };
-    let http_server = HttpServer::new(blog_service, server_config).await?;
+    let http_server = HttpServer::new(offchain_service, server_config).await?;
     http_server.run().await
 }

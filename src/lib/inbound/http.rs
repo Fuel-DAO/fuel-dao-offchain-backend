@@ -3,16 +3,19 @@
     implementation is opaque to module consumers.
 */
 
-use std::sync::Arc;
+use std::{net::SocketAddr, sync::Arc};
 
 use anyhow::Context;
-use axum::{Router, routing::post};
+use axum::{
+    routing::{get, post},
+    Router,
+};
+use reqwest::StatusCode;
 use tokio::net;
+use tower_http::cors::CorsLayer;
 
-use crate::domain::transactions::ports::TransactionService; // Update this to your correct path
-use super::handlers::create_transaction::create_transaction; // Update this to your correct path
-
-
+use super::handlers::create_transaction::create_transaction;
+use crate::domain::transactions::ports::TransactionService; // Update this to your correct path // Update this to your correct path
 
 /// Configuration for the HTTP server.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -50,14 +53,31 @@ impl HttpServer {
             transaction_service: Arc::new(transaction_service),
         };
 
+        // let cors = CorsLayer::new()
+        //     // allow `GET` and `POST` when accessing the resource
+        //     .allow_methods([Method::GET, Method::POST])
+        //     // allow requests from any origin
+        //     .allow_origin(Any);
+
         let router = axum::Router::new()
+            .route("/health", get(health_route))
             .nest("/api", api_routes())
+            // .layer(cors)
+            .layer(CorsLayer::permissive())
             .layer(trace_layer)
             .with_state(state);
 
-        let listener = net::TcpListener::bind(format!("0.0.0.0:{}", config.port))
+        tracing::info!("Config on {:?}", config);
+
+        let addr = SocketAddr::from((
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            config.port.parse::<u16>().unwrap_or(50051),
+        ));
+        // let addr =format!("0.0.0.0:{}", config.port);
+
+        let listener = net::TcpListener::bind(&addr)
             .await
-            .with_context(|| format!("failed to listen on {}", config.port))?;
+            .with_context(|| format!("failed to listen on port {}", config.port))?;
 
         Ok(Self { router, listener })
     }
@@ -74,4 +94,8 @@ impl HttpServer {
 
 fn api_routes<TS: TransactionService>() -> Router<AppState<TS>> {
     Router::new().route("/transactions", post(create_transaction::<TS>)) // Route for creating transactions
+}
+
+async fn health_route() -> (StatusCode, &'static str) {
+    (StatusCode::OK, "OK")
 }

@@ -1,0 +1,80 @@
+
+app = 'fueldao-offchain-server'
+primary_region = 'bom'
+
+[processes]
+# The command below is used to launch a Rails server; be sure to
+# replace with the command you're using to launch your server.
+web = "./fueldao-offchain-server"
+# cron = "supercronic /app/crontab"
+
+[[services]]
+internal_port = 50051
+protocol = "tcp"
+processes = ["web"]
+http_checks = []
+
+[[services.ports]]
+handlers = ["tls", "http"] 
+tls_options = { "versions" = ["TLSv1.2", "TLSv1.3"] } 
+port = 443
+
+[env]
+BACKEND = "LIVE"
+RUST_LOG="info"
+SERVER_PORT="50051"
+EMAIL_CLIENT_ID = "462267493875-qe8r7afhg2gnto5pgdjfoquonel5oka2.apps.googleusercontent.com"
+EMAIL_ACCESS_TOKEN = "ya29.a0AeDClZBmFrxsjUzf_zIcDbcOsk1kcHgSicxNHSDzFTUucVyFQCu2nVNN-zqvqnUGx85x05" # INVALID TOKEN ADDED
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 1024
+# kill_signal = 'SIGINT'
+# kill_timeout = '5s'
+
+# [build]
+
+# [processes]
+# web = "/server"
+
+# [[services]]
+#   processes = ["web"] # this service only applies to the web process
+#   internal_port = 50051
+#   protocol = "tcp"
+
+# [[services.ports]]
+# handlers = ["tls"]
+# tls_options = { "alpn" = ["h2"], "versions" = ["TLSv1.2", "TLSv1.3"] }
+# port = 443
+
+
+
+
+# # [env]
+# # PORT = '8080'
+
+# # [processes]
+# # # The command below is used to launch a Rails server; be sure to
+# # # replace with the command you're using to launch your server.
+# # web = "./server"
+# # # cron = "supercronic /app/crontab"
+
+# # [[services]]
+# # internal_port = 50051
+# # protocol = "tcp"
+# # processes = ["web"]
+
+# # [[services.ports]]
+# # handlers = ["tls"]
+# # tls_options = { "alpn" = ["h2"], "versions" = ["TLSv1.2", "TLSv1.3"] }
+# # port = 443
+
+# # [services.concurrency]
+# # hard_limit = 1000
+# # soft_limit = 500
+
+# [[vm]]
+# memory = '2gb'
+# cpu_kind = 'shared'
+# cpus = 2

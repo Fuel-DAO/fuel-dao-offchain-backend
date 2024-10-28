@@ -1,7 +1,6 @@
-use std::sync::Arc;
+use std::{env, sync::Arc};
 
 use candid::Principal;
-use dotenv_codegen::dotenv;
 use ic_agent::{agent::AgentBuilder, Agent, Identity};
 
 const LIVE_AGENT_URL: &str = "https://ic0.app";
@@ -14,13 +13,16 @@ pub struct AgentWrapper(Agent);
 impl AgentWrapper {
     pub fn build(builder_func: impl FnOnce(AgentBuilder) -> AgentBuilder) -> Self {
 
-        let live = dotenv!("BACKEND") == "LIVE" ;
+        dotenv::dotenv().ok();
 
-        let url = if live {
-            LIVE_AGENT_URL
-        } else {
-            LOCAL_AGENT_URL
-        };
+        let live = env::var("BACKEND").unwrap_or("LIVE".to_string()) == "LIVE" ;
+
+        let url = "https://ic0.app";
+        // let url = if live {
+        //     LIVE_AGENT_URL
+        // } else {
+        //     LOCAL_AGENT_URL
+        // };
 
         let mut builder =  Agent::builder().with_url(url);
         builder = builder_func(builder);
