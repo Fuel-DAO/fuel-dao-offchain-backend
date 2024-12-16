@@ -23,6 +23,10 @@ Make sure you have the following installed:
 
 ## Set up .env
 Update .env from .env.template
+Uncomment from Dockerfile
+```bash
+# CMD ["/fueldao-offchain-server"]
+```
 
 ## Docker run
 ```bash
