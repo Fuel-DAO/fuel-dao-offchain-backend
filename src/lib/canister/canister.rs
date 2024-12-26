@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{env, sync::Arc};
 use candid::Principal;
 use ic_agent::{identity::DelegatedIdentity, Identity};
 use serde::{Deserialize, Serialize};
@@ -28,7 +28,7 @@ impl CanistersAuthWire {
 
         Ok(Canisters {
             agent,
-            id: Some(arc_id),
+            // id: Some(arc_id),
             user_principal: self.user_principal,
             expiry: self.expiry,
             backend_principal: BACKEND_ID,
@@ -40,7 +40,7 @@ impl CanistersAuthWire {
 #[derive(Clone)]
 pub struct Canisters<const AUTH: bool> {
     agent: AgentWrapper,
-    id: Option<Arc<DelegatedIdentity>>,
+    // id: Option<Arc<DelegatedIdentity>>,
     user_principal: Principal,
     expiry: u64,
     backend_principal: Principal,
@@ -51,7 +51,7 @@ impl Default for Canisters<false> {
     fn default() -> Self {
         Self {
             agent: AgentWrapper::build(|b| b),
-            id: None,
+            // id: None,
             user_principal: Principal::anonymous(),
             expiry: 0,
             backend_principal: BACKEND_ID,
@@ -70,9 +70,9 @@ impl Canisters<true> {
             });
         let id = Arc::new(id);
 
-        Canisters {
+        Self {
             agent: AgentWrapper::build(|b| b.with_arc_identity(id.clone())),
-            id: Some(id),
+            // id: Some(id),
             user_principal: Principal::anonymous(),
             expiry,
             backend_principal: BACKEND_ID,
@@ -84,27 +84,43 @@ impl Canisters<true> {
         self.expiry
     }
 
-    pub fn identity(&self) -> &DelegatedIdentity {
-        self.id
-            .as_ref()
-            .expect("Authenticated canisters must have an identity")
+    // pub fn identity(&self) -> &DelegatedIdentity {
+    //     self.id
+    //         .as_ref()
+    //         .expect("Authenticated canisters must have an identity")
+    // }
+
+    pub fn set_arc_id(id: Arc<impl Identity + 'static>) -> Canisters<true> {
+        Self {
+            agent: AgentWrapper::build(|b| b.with_arc_identity(id.clone())),
+            // id: Some(Arc::new(id)),
+            user_principal: Principal::anonymous(),
+            expiry: 0,
+            backend_principal: BACKEND_ID,
+            // profile_details: None,
+        }
     }
 
 
-    pub fn user_principal(&self) -> Principal {
-        self.identity()
-            .sender()
-            .expect("expect principal to be present")
-    }
+    // pub fn user_principal(&self) -> Principal {
+    //     self.identity()
+    //         .sender()
+    //         .expect("expect principal to be present")
+    // }
 
-    pub  fn backend_canister(&self) -> Backend<'_> {
-        self.backend()
+    pub async fn backend_canister(&self) -> Backend<'_> {
+        self.backend().await
     }
 }
 
 impl<const A: bool> Canisters<A> {
-    pub fn backend(&self) -> Backend<'_> {
+    pub async fn backend(&self) -> Backend<'_> {
         let agent = self.agent.get_agent();
+        dotenv::dotenv().ok();
+        let live = env::var("BACKEND").unwrap_or("LIVE".to_string()) == "LIVE" ;
+        if !live {
+            agent.fetch_root_key().await.unwrap();
+        }
         Backend(self.backend_principal, agent)
     }
 }

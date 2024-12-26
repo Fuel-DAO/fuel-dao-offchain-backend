@@ -6,11 +6,20 @@ type Customer = record {
   mobile_number : text;
   name : text;
   email : text;
+  caller : principal;
   country_code : text;
   aadhar : text;
 };
 
-type PaymentStatus = variant { Paid; Unpaid };
+type PaymentStatus = variant {
+  Paid : record { payment : RazorpayPayment };
+  Unpaid;
+};
+type RazorpayPayment = record {
+  payment_link_id : opt text;
+  payment_id : text;
+  ref_id : text;
+};
 
 type RentalTransaction = record {
   end_timestamp : nat64;
@@ -25,5 +34,11 @@ type RentalTransaction = record {
 
 
 service : () -> {
-  reserve_car : (nat64, nat64, nat64, Customer) -> (Result);
+  reserve_car : (nat64, RazorpayPayment)  -> (Result);
+  validate_details_and_availaibility : (
+      nat64,
+      nat64,
+      nat64,
+      Customer,
+    ) -> (Result);
 }

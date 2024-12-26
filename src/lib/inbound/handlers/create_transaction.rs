@@ -10,6 +10,7 @@ use axum::Json;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
+use crate::canister::backend::RazorpayPayment;
 use crate::domain::transactions::models::transaction::*;
 use crate::domain::transactions::ports::TransactionService;
 use crate::inbound::http::AppState;
@@ -168,6 +169,11 @@ pub struct ApiErrorData {
 }
 
 /// The body of a [Transaction] creation request.
+#[derive(Debug, Clone, Deserialize)]
+pub struct ConfirmTransactionHttpRequestBody {
+    booking_id: u64, payment: RazorpayPayment,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct CreateTransactionHttpRequestBody {
     pub name: String,
@@ -282,6 +288,20 @@ impl From<ParseCreateTransactionHttpRequestError> for ApiError {
 
 /// The response body data field for successful [Transaction] creation.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct CreatePaymentLink {
+    payment_link: String,
+}
+
+impl From<&String> for CreatePaymentLink {
+    fn from(link: &String) -> Self {
+        Self {
+            payment_link: link.to_string(),
+        }
+    }
+}
+
+/// The response body data field for successful [Transaction] creation.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct CreateTransactionResponseData {
     id: u64,
 }
@@ -302,17 +322,43 @@ impl From<&Transaction> for CreateTransactionResponseData {
 /// - 422 Unprocessable entity: A [Transaction] with invalid data was provided.
 pub async fn create_transaction<TS: TransactionService>(
     State(state): State<AppState<TS>>,
-    Json(body): Json<CreateTransactionHttpRequestBody>,
+    Json(body): Json<ConfirmTransactionHttpRequestBody>,
 ) -> Result<ApiSuccess<CreateTransactionResponseData>, ApiError> {
+    // Validate input and convert to domain request
+    // let domain_req = body.try_into_domain()?;
+
+    state
+        .transaction_service
+        .create_transaction(body.booking_id, &body.payment)
+        .await
+        .map_err(ApiError::from)
+        .map(|ref transaction| ApiSuccess::new(StatusCode::CREATED, transaction.into()))
+}
+
+pub async fn create_payment_link<TS: TransactionService>(
+    State(state): State<AppState<TS>>,
+    Json(body): Json<CreateTransactionHttpRequestBody>,
+) -> Result<ApiSuccess<CreatePaymentLink>, ApiError> {
     // Validate input and convert to domain request
     let domain_req = body.try_into_domain()?;
 
     state
         .transaction_service
-        .create_transaction(&domain_req)
+        .create_payment_link(&domain_req)
         .await
         .map_err(ApiError::from)
-        .map(|ref transaction| ApiSuccess::new(StatusCode::CREATED, transaction.into()))
+        .map(|ref transaction| ApiSuccess::new(StatusCode::OK, transaction.into()))
+}
+
+pub async  fn get_principal<TS: TransactionService>(
+    State(state): State<AppState<TS>>,
+) -> Result<ApiSuccess<String>, ApiError> {
+    state
+        .transaction_service
+        .get_principal()
+        .await
+        .map_err(ApiError::from)
+        .map(|ref principal| ApiSuccess::new(StatusCode::OK, principal.to_string()))
 }
 
 #[cfg(test)]
@@ -320,8 +366,10 @@ mod tests {
     use std::sync::Arc;
 
     use anyhow::anyhow;
+    use candid::Principal;
     // use uuid::Uuid;
 
+    use crate::canister::backend::RazorpayPayment;
     use crate::domain::transactions::models::transaction::{CreateTransactionRequest, Transaction};
     use crate::domain::transactions::ports::TransactionService;
 
@@ -331,17 +379,32 @@ mod tests {
     struct MockTransactionService {
         create_transaction_result:
             Arc<std::sync::Mutex<Result<Transaction, CreateTransactionError>>>,
+        create_payment_link_result:
+            Arc<Result<String, CreateTransactionError>>,
     }
 
     impl TransactionService for MockTransactionService {
         async fn create_transaction(
             &self,
-            _: &CreateTransactionRequest,
+            _booking_id: u64, _payment: &RazorpayPayment
         ) -> Result<Transaction, CreateTransactionError> {
             let mut guard = self.create_transaction_result.lock();
             let mut result = Err(CreateTransactionError::Unknown(anyhow!("substitute error")));
             std::mem::swap(guard.as_deref_mut().unwrap(), &mut result);
             result
+        }
+
+        async fn create_payment_link(
+                &self,
+                _: &CreateTransactionRequest,
+            ) -> Result<String, CreateTransactionError>{
+            let  _ = self.create_payment_link_result.clone();
+            let  result = Err(CreateTransactionError::Unknown(anyhow!("substitute error")));
+            result
+        }
+        
+        async fn get_principal(&self) -> Result<String, CreateTransactionError> {
+            Ok(Principal::anonymous().to_text())
         }
     }
 
@@ -352,6 +415,7 @@ mod tests {
         let transaction_id = 1;
 
         let service = MockTransactionService {
+            create_payment_link_result: Arc::new(Ok("https://shortlink.com".to_string())),
             create_transaction_result: Arc::new(std::sync::Mutex::new(Ok(Transaction::new(
                 booking_id,
                 car_id,
@@ -370,18 +434,9 @@ mod tests {
             transaction_service: Arc::new(service),
         });
 
-        let body = axum::extract::Json(CreateTransactionHttpRequestBody {
-            name: "Test User".to_string(),
-            email_address: "test@example.com".to_string(),
-            pan: "ABCDE1234F".to_string(),
-            age: 25,
-            car_id,
-            aadhar: 123456789012,
-            country_code: 91,
-            mobile_number: "9876543210".to_string(),
-            principal_jwk: String::new(),
-            start_time: 1734556800, // Example epoch time for 2024-12-18 00:00:00 UTC
-            end_time: 1734564000,
+        let body = axum::extract::Json(ConfirmTransactionHttpRequestBody {
+            booking_id,
+            payment: RazorpayPayment { payment_link_id: None, payment_id: String::new(), ref_id: booking_id.to_string() }
         });
 
         let expected = ApiSuccess::new(

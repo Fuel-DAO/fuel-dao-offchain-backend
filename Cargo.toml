@@ -37,6 +37,7 @@ reqwest = {version = "0.12.8", default-features = false, features = ["rustls-tls
 base64 = "0.22.1"
 time = {version = "0.3.36", features = ["formatting", "parsing"]}
 serde_json = "1.0.128"
+stringreader = "0.1.1"
 
 
 

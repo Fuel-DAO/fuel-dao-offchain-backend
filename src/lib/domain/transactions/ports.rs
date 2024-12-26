@@ -10,11 +10,27 @@
 
 use std::future::Future;
 
-use crate::domain::transactions::models::transaction::{
-    CreateTransactionError,
-    {Transaction, CreateTransactionRequest}
-};
+use crate::{canister::backend::{RazorpayPayment, RentalTransaction}, domain::transactions::models::transaction::{
+    CreateTransactionError, CreateTransactionRequest, Transaction
+}};
 
+
+/// `TransactionService` is the public API for the transaction domain.
+///
+/// External modules must conform to this contract – the domain is not concerned with the
+/// implementation details or underlying technology of any external code.
+pub trait PaymentService: Clone + Send + Sync + 'static {
+    /// Asynchronously create a new payment link [Payment].
+    ///
+    /// # Errors
+    ///
+    /// - [CreateTransactionError::Duplicate] if a [Transaction] with the same [TransactionName] already exists.
+    fn create_payment_link(
+        &self,
+        amount: f64,
+        booking_id: u64,
+    ) -> impl Future<Output = Result<String, String>> + Send;
+}
 
 /// `TransactionService` is the public API for the transaction domain.
 ///
@@ -28,8 +44,15 @@ pub trait TransactionService: Clone + Send + Sync + 'static {
     /// - [CreateTransactionError::Duplicate] if a [Transaction] with the same [TransactionName] already exists.
     fn create_transaction(
         &self,
-        req: &CreateTransactionRequest,
+        booking_id: u64, payment: &RazorpayPayment
     ) -> impl Future<Output = Result<Transaction, CreateTransactionError>> + Send;
+
+    fn create_payment_link(
+        &self,
+        req: &CreateTransactionRequest,
+    ) -> impl Future<Output = Result<String, CreateTransactionError>> + Send;
+
+    fn get_principal(&self) -> impl Future<Output = Result<String, CreateTransactionError>> + Send;
 }
 
 /// `TransactionRepository` represents a store of transaction data.
@@ -45,8 +68,16 @@ pub trait TransactionRepository: Send + Sync + Clone + 'static {
     ///   already exists.
     fn create_transaction(
         &self,
-        req: &CreateTransactionRequest,
+        booking_id: u64,
+        payment: &RazorpayPayment,
     ) -> impl Future<Output = Result<Transaction, CreateTransactionError>> + Send;
+
+    fn check_if_car_available(
+        &self,
+        req: &CreateTransactionRequest,
+    ) -> impl Future<Output = Result<RentalTransaction, CreateTransactionError>> + Send;
+
+    fn get_principal(&self) -> impl Future<Output = Result<String, CreateTransactionError>> + Send;
 }
 
 /// `TransactionMetrics` describes an aggregator of transaction-related metrics, such as a time-series
