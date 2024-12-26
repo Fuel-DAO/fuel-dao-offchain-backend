@@ -1,4 +1,5 @@
 use std::fmt::{Display, Formatter};
+use candid::Principal;
 use derive_more::From;
 use regex::Regex;
 use thiserror::Error;
@@ -388,8 +389,8 @@ impl CreateTransactionRequest {
         k256::SecretKey::from_jwk_str(&self.principal_jwk).unwrap()
     }
 
-    pub fn customer(&self) -> Customer {
-        Customer { age: self.age.clone().0, pan: self.pan.clone().0, mobile_number: self.mobile_number.0.to_string(), name: self.name.0.clone(), email: self.email.0.clone(), country_code: self.country_code.to_string(), aadhar: self.aadhar.0.to_string() }
+    pub fn customer(&self, caller: Principal) -> Customer {
+        Customer { age: self.age.clone().0, pan: self.pan.clone().0, mobile_number: self.mobile_number.0.to_string(), name: self.name.0.clone(), email: self.email.0.clone(), country_code: self.country_code.to_string(), aadhar: self.aadhar.0.to_string(), caller: caller }
     }
 
 }

@@ -2,6 +2,7 @@ use offchain::config::Config;
 use offchain::domain::transactions::service::Service;
 use offchain::inbound::http::{HttpServer, HttpServerConfig};
 use offchain::outbound::email_client::EmailClient;
+use offchain::outbound::payment_client::{ PaymentClient, PaymentConfig};
 use offchain::outbound::prometheus::Prometheus;
 use offchain::outbound::ic_agent::IcAgentTransactionRepository;
 
@@ -13,9 +14,10 @@ async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt::init();
 
     let prometheus = Prometheus::new();
+    let payment_client = PaymentClient::new(PaymentConfig { payment_key: config.razorpay_key, payment_secret: config.razorpay_secret });
     let email_client = EmailClient::new(config.email_config);
-    let ic_agent = IcAgentTransactionRepository::new();
-    let offchain_service = Service::new(ic_agent, prometheus, email_client);
+    let ic_agent = IcAgentTransactionRepository::new(config.admin_private_key);
+    let offchain_service = Service::new(ic_agent, prometheus, email_client, payment_client);
 
     let server_config = HttpServerConfig {
         port: &config.server_port,

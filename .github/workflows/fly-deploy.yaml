@@ -20,6 +20,9 @@ jobs:
         run: |
           flyctl secrets set EMAIL_REFRESH_TOKEN=${{ secrets.BOOKINGS_AT_FUEL_DAO_IO_GMAIL_ACCOUNT_REFRESH_TOKEN }} --app "fueldao-offchain-server" --stage
           flyctl secrets set EMAIL_CLIENT_SECRET=${{ secrets.GMAIL_OAUTH_CLIENT_SECRET_KEY }} --app "fueldao-offchain-server" --stage
+          flyctl secrets set RAZORPAY_SECRET=${{ secrets.RAZORPAY_KEY_SECRET }} --app "fueldao-offchain-server" --stage
+          flyctl secrets set RAZORPAY_KEY=${{ vars.RAZORPAY_KEY_ID }} --app "fueldao-offchain-server" --stage
+          flyctl secrets set FUEL_DAO_CANISTER_CONTROLLER_PRIVATE_KEY=${{ secrets.INTERNET_COMPUTER_APP_ADMIN_AND_PROPOSAL_SUBMITTER_IDENTITY_PRIVATE_KEY }} --app "fueldao-offchain-server" --stage
           flyctl secrets set EMAIL_CLIENT_ID="462267493875-qe8r7afhg2gnto5pgdjfoquonel5oka2.apps.googleusercontent.com" --app "fueldao-offchain-server" --stage
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_IO_DEPLOY_TOKEN }}

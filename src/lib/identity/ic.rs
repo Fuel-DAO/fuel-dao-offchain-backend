@@ -11,22 +11,24 @@ const LOCAL_AGENT_URL: &str = "http://localhost:4943";
 pub struct AgentWrapper(Agent);
 
 impl AgentWrapper {
-    pub fn build(builder_func: impl FnOnce(AgentBuilder) -> AgentBuilder) -> Self {
+    pub  fn build(builder_func: impl FnOnce(AgentBuilder) -> AgentBuilder) -> Self {
 
         dotenv::dotenv().ok();
 
         let live = env::var("BACKEND").unwrap_or("LIVE".to_string()) == "LIVE" ;
 
-        let url = "https://ic0.app";
-        // let url = if live {
-        //     LIVE_AGENT_URL
-        // } else {
-        //     LOCAL_AGENT_URL
-        // };
+        // let url = "https://ic0.app";
+        let url = if live {
+            LIVE_AGENT_URL
+        } else {
+            LOCAL_AGENT_URL
+        };
 
         let mut builder =  Agent::builder().with_url(url);
         builder = builder_func(builder);
-        Self(builder.build().unwrap())
+        let agent  =builder.build().unwrap();
+        
+        Self(agent)
     }
 
     pub fn get_agent(&self) -> &Agent {

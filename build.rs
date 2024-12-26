@@ -42,22 +42,30 @@ mod build_common {
             ic_can_ids.push((canister, can_id.ic));
         }
 
-        let local_canister_id_mod = generate_canister_id_mod(local_can_ids);
-        let ic_canister_id_mod = generate_canister_id_mod(ic_can_ids);
-
-        let canister_id_mod_contents = format!(
-            r#"
-        mod local {{
-            {local_canister_id_mod}
-        }}
-
+        let canister_id_mod_contents = if is_dev {
+            let local_canister_id_mod = generate_canister_id_mod(local_can_ids);
+            format!(
+                r#"
+                mod local {{
+                    {local_canister_id_mod}
+                }}
         
-        mod ic {{
-            {ic_canister_id_mod}
-        }}
-        pub use {}::*;
-"#, if is_dev {"local"} else {"ic"}
-        );
+                pub use local::*;
+                "#
+            )
+        } else {
+            let ic_canister_id_mod = generate_canister_id_mod(ic_can_ids);
+            format!(
+                r#"
+                mod ic {{
+                    {ic_canister_id_mod}
+                }}
+        
+                pub use ic::*;
+                "#
+            )
+        };
+        
         let canister_id_mod_path = PathBuf::from(out_dir).join("canister_ids.rs");
         fs::write(canister_id_mod_path, canister_id_mod_contents)?;
 

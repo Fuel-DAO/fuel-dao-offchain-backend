@@ -14,7 +14,7 @@ use reqwest::StatusCode;
 use tokio::net;
 use tower_http::cors::CorsLayer;
 
-use super::handlers::create_transaction::create_transaction;
+use super::handlers::create_transaction::{create_payment_link, create_transaction, get_principal};
 use crate::domain::transactions::ports::TransactionService; // Update this to your correct path // Update this to your correct path
 
 /// Configuration for the HTTP server.
@@ -93,7 +93,10 @@ impl HttpServer {
 }
 
 fn api_routes<TS: TransactionService>() -> Router<AppState<TS>> {
-    Router::new().route("/transactions", post(create_transaction::<TS>)) // Route for creating transactions
+    Router::new()
+    .route("/transactions", post(create_transaction::<TS>)) // Route for creating transactions
+    .route("/payment", post(create_payment_link::<TS>)) // Route for creating transactions
+    .route("/principal", get(get_principal::<TS>)) // Route for creating transactions
 }
 
 async fn health_route() -> (StatusCode, &'static str) {
