@@ -13,9 +13,11 @@ pub struct AgentWrapper(Agent);
 impl AgentWrapper {
     pub  fn build(builder_func: impl FnOnce(AgentBuilder) -> AgentBuilder) -> Self {
 
-        dotenv::dotenv().ok();
+        // dotenv::dotenv().ok();
 
-        let live = env::var("BACKEND").unwrap_or("LIVE".to_string()) == "LIVE" ;
+        // let live = env::var("BACKEND").unwrap_or("LIVE".to_string()) == "LIVE" ;
+
+        let live = true;
 
         // let url = "https://ic0.app";
         let url = if live {

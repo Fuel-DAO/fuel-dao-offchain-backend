@@ -116,8 +116,9 @@ impl Canisters<true> {
 impl<const A: bool> Canisters<A> {
     pub async fn backend(&self) -> Backend<'_> {
         let agent = self.agent.get_agent();
-        dotenv::dotenv().ok();
-        let live = env::var("BACKEND").unwrap_or("LIVE".to_string()) == "LIVE" ;
+        // dotenv::dotenv().ok();
+        // let live = env::var("BACKEND").unwrap_or("LIVE".to_string()) == "LIVE" ;
+        let live = true;
         if !live {
             agent.fetch_root_key().await.unwrap();
         }

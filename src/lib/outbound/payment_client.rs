@@ -32,8 +32,9 @@ impl PaymentService for PaymentClient {
         booking_id: u64
     ) -> Result<String, String> {
         // Payment amount and callback URL
-        dotenv::dotenv().ok();
-        let live = env::var("BACKEND").unwrap_or("LIVE".to_string()) == "LIVE" ;
+        // dotenv::dotenv().ok();
+        // let live = env::var("BACKEND").unwrap_or("LIVE".to_string()) == "LIVE" ;
+        let live = true;
         let callback_url = if !live {
             "http://localhost:8080/payment"
         } else {
