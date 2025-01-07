@@ -75,7 +75,8 @@ where
         let result = self.repo.check_if_car_available(req).await;
         match result {
             Ok(tx) => {
-                self.payment_service.create_payment_link(tx.total_amount, tx.booking_id).await.map_err(|f| CreateTransactionError::Unknown(anyhow!("Failed to generate the payment link {f}")))
+                // total amount + 2.36 % razorpay fee and taxes
+                self.payment_service.create_payment_link(tx.total_amount * 1.0236, tx.booking_id).await.map_err(|f| CreateTransactionError::Unknown(anyhow!("Failed to generate the payment link {f}")))
             },
             Err(e) => Err(e),
         }
