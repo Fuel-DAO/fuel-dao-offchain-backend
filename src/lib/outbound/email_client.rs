@@ -102,9 +102,9 @@ impl EmailClient {
         match mail_state {
             Some(state) => {
                 let access_token = state.access_token;
-                let subject = "Booking Confirmed with FuelDao";
+                let subject = "Booking Confirmed with FuelEV";
                 let body = format!(
-                    "Hey {username},\n\nThank you for choosing FuelDAO! This is a confirmation email of your booking ID {booking_id} with us from {start_date} IST to {end_date} IST.\n\nWatch this space for more details regarding your vehicle details and other information to make it a smooth experience.\n\nRegards\nTeam FuelDao"
+                    "Hey {username},\n\nThank you for choosing FuelEV! This is a confirmation email of your booking ID {booking_id} with us from {start_date} IST to {end_date} IST.\n\nWatch this space for more details regarding your vehicle details and other information to make it a smooth experience.\n\nRegards\nTeam FuelEV"
                 );
                 let url = "https://www.googleapis.com/gmail/v1/users/me/messages/send";
 
